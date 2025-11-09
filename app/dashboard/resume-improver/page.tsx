@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
 import { Brain, Copy, Check } from "lucide-react"
+import { ResumeUploader } from "@/components/resume-uploader"
 
 export default function ResumeImproverPage() {
   const [resumeText, setResumeText] = useState("")
@@ -17,6 +18,8 @@ export default function ResumeImproverPage() {
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [loadingStep, setLoadingStep] = useState(0)
+  const [resumeId, setResumeId] = useState<string | null>(null)
+  const [wordCount, setWordCount] = useState(0)
 
   const handleGenerate = async () => {
     if (!resumeText.trim()) {
@@ -34,11 +37,11 @@ export default function ResumeImproverPage() {
       "Analyzing resume content...",
       "Identifying improvement areas...",
       "Generating enhanced version...",
-      "Finalizing suggestions..."
+      "Finalizing suggestions...",
     ]
-    
+
     const stepInterval = setInterval(() => {
-      setLoadingStep(prev => {
+      setLoadingStep((prev) => {
         if (prev < loadingSteps.length - 1) return prev + 1
         return prev
       })
@@ -71,6 +74,13 @@ export default function ResumeImproverPage() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const handleUploadSuccess = (text: string, resId: string, wCount: number) => {
+    setResumeText(text)
+    setResumeId(resId)
+    setWordCount(wCount)
+    setError(null)
+  }
+
   return (
     <div className="p-6 md:p-8 space-y-6 animate-fade-in">
       <div className="animate-slide-up">
@@ -85,17 +95,26 @@ export default function ResumeImproverPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Section */}
-        <Card className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 lg:h-fit animate-slide-up" style={{ animationDelay: "0.1s" }}>
+        <Card
+          className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 lg:h-fit animate-slide-up"
+          style={{ animationDelay: "0.1s" }}
+        >
           <CardHeader className="pb-3">
             <CardTitle className="text-base text-black dark:text-white">Your Resume</CardTitle>
             <CardDescription className="text-xs text-neutral-500 dark:text-neutral-500">
-              Paste your resume text below
+              Upload a PDF or paste your resume text
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <ResumeUploader onSuccess={handleUploadSuccess} onError={(msg) => setError(msg)} disabled={isLoading} />
+
+            <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
+              <span>or</span>
+            </div>
+
             <div>
               <Label htmlFor="resume" className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-                Resume Text
+                Resume Text ({wordCount} words)
               </Label>
               <Textarea
                 id="resume"
@@ -104,6 +123,7 @@ export default function ResumeImproverPage() {
                 onChange={(e) => setResumeText(e.target.value)}
                 className="mt-1.5 min-h-48 text-sm bg-neutral-50 dark:bg-black border-neutral-200 dark:border-neutral-800 resize-none focus:border-black dark:focus:border-white smooth-hover"
               />
+              <p className="text-xs text-neutral-400 dark:text-neutral-600 mt-1">Minimum 100 words required</p>
             </div>
 
             <div>
@@ -124,9 +144,9 @@ export default function ResumeImproverPage() {
 
             {error && <p className="text-xs text-neutral-500 dark:text-neutral-500">{error}</p>}
 
-            <Button 
-              onClick={handleGenerate} 
-              disabled={isLoading} 
+            <Button
+              onClick={handleGenerate}
+              disabled={isLoading}
               className="w-full h-9 text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 smooth-hover"
             >
               {isLoading && <Spinner className="mr-2 w-3.5 h-3.5" />}
@@ -136,7 +156,10 @@ export default function ResumeImproverPage() {
         </Card>
 
         {/* Results Section */}
-        <Card className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+        <Card
+          className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 animate-slide-up"
+          style={{ animationDelay: "0.2s" }}
+        >
           <CardHeader className="pb-3">
             <CardTitle className="text-base text-black dark:text-white">Improved Resume</CardTitle>
             <CardDescription className="text-xs text-neutral-500 dark:text-neutral-500">
@@ -150,16 +173,23 @@ export default function ResumeImproverPage() {
                 <div className="text-center py-8">
                   <Spinner className="w-8 h-8 mx-auto mb-4 text-black dark:text-white" />
                   <p className="text-sm font-medium text-black dark:text-white mb-2">
-                    {["Analyzing resume content...", "Identifying improvement areas...", "Generating enhanced version...", "Finalizing suggestions..."][loadingStep]}
+                    {
+                      [
+                        "Analyzing resume content...",
+                        "Identifying improvement areas...",
+                        "Generating enhanced version...",
+                        "Finalizing suggestions...",
+                      ][loadingStep]
+                    }
                   </p>
                   <div className="w-full max-w-xs mx-auto bg-neutral-200 dark:bg-neutral-800 rounded-full h-1.5 overflow-hidden">
-                    <div 
+                    <div
                       className="bg-black dark:bg-white h-full transition-all duration-500 ease-out"
                       style={{ width: `${((loadingStep + 1) / 4) * 100}%` }}
                     />
                   </div>
                 </div>
-                
+
                 {/* Loading Skeleton */}
                 <div className="space-y-4 opacity-40">
                   <div className="animate-pulse">
@@ -224,8 +254,8 @@ export default function ResumeImproverPage() {
                     <h3 className="text-sm font-medium text-black dark:text-white mb-2">Key Changes</h3>
                     <div className="space-y-2">
                       {result.edits.slice(0, 3).map((edit: any, i: number) => (
-                        <div 
-                          key={i} 
+                        <div
+                          key={i}
                           className="bg-neutral-50 dark:bg-black p-3 rounded-lg border border-neutral-200 dark:border-neutral-800 animate-fade-in"
                           style={{ animationDelay: `${i * 0.05}s` }}
                         >
@@ -233,9 +263,7 @@ export default function ResumeImproverPage() {
                           <p className="text-xs line-through text-neutral-400 dark:text-neutral-600 mb-1">
                             {edit.line_before}
                           </p>
-                          <p className="text-xs text-black dark:text-white font-medium">
-                            {edit.line_after}
-                          </p>
+                          <p className="text-xs text-black dark:text-white font-medium">{edit.line_after}</p>
                         </div>
                       ))}
                     </div>

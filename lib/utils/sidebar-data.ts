@@ -24,6 +24,12 @@ export const sidebarData = [
     ],
   },
   {
+    id: "auto_applier",
+    title: "Auto-Applier",
+    icon: "Zap",
+    children: [{ id: "start_auto_apply", title: "Start Auto-Apply", href: "/dashboard/auto-applier/start" }],
+  },
+  {
     id: "account",
     title: "Account",
     icon: "User",
