@@ -3,7 +3,6 @@ import { createAdminClient } from "@/lib/supabase/admin"
 import { detectGibberish } from "@/lib/utils/gibberish-detector"
 import { validateResumeText } from "@/lib/utils/validation"
 import { type NextRequest, NextResponse } from "next/server"
-import PDFParse from "pdf-parse"
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,31 +15,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const formData = await request.formData()
-    const file = formData.get("file") as File
+    const body = await request.json()
+    const { text, fileName } = body
 
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 })
+    if (!text) {
+      return NextResponse.json({ error: "No text provided" }, { status: 400 })
     }
 
-    if (!file.name.toLowerCase().endsWith(".pdf")) {
-      return NextResponse.json({ error: "Only PDF files are accepted" }, { status: 400 })
-    }
-
-    // Parse PDF
-    const buffer = await file.arrayBuffer()
-    let extractedText = ""
-
-    try {
-      const pdfData = await PDFParse(buffer)
-      extractedText = pdfData.text
-    } catch (pdfErr) {
-      console.error("[v0] PDF parsing error:", pdfErr)
-      return NextResponse.json({ error: "Failed to parse PDF file" }, { status: 400 })
-    }
-
-    // Validate text length
-    const validation = validateResumeText(extractedText)
+    const validation = validateResumeText(text)
     if (!validation.valid) {
       const admin = createAdminClient()
       await admin.from("activity_log").insert({
@@ -51,8 +33,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ errorCode: "TOO_SHORT", message: validation.error }, { status: 400 })
     }
 
-    // Check for gibberish
-    const gibberishCheck = await detectGibberish(extractedText)
+    const gibberishCheck = await detectGibberish(text)
     if (gibberishCheck.isGibberish) {
       const admin = createAdminClient()
       await admin.from("activity_log").insert({
@@ -69,20 +50,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Save resume to database
     const admin = createAdminClient()
     const { data: resume, error: insertError } = await admin
       .from("resumes")
       .insert({
         user_id: user.id,
-        title: file.name,
-        content: extractedText,
-        raw_text: extractedText,
+        title: fileName || "Uploaded Resume",
+        content: text,
+        raw_text: text,
         word_count: validation.wordCount,
         is_gibberish: false,
         metadata: {
-          file_name: file.name,
-          file_size: file.size,
+          file_name: fileName,
           parsed_at: new Date().toISOString(),
         },
       })
@@ -96,9 +75,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       resumeId: resume.id,
-      text: extractedText,
+      text: text,
       wordCount: validation.wordCount,
-      fileName: file.name,
+      fileName: fileName || "Uploaded Resume",
     })
   } catch (error) {
     console.error("[v0] Resume upload error:", error)
