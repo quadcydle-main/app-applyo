@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
-import { Brain, Copy, Check } from "lucide-react"
-import { ResumeUploader } from "@/components/resume-uploader"
+import { Brain, Copy, Check, FileText, Sparkles, Target } from "lucide-react"
 
 export default function ResumeImproverPage() {
   const [resumeText, setResumeText] = useState("")
@@ -18,7 +17,6 @@ export default function ResumeImproverPage() {
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [loadingStep, setLoadingStep] = useState(0)
-  const [resumeId, setResumeId] = useState<string | null>(null)
   const [wordCount, setWordCount] = useState(0)
 
   const handleGenerate = async () => {
@@ -79,205 +77,299 @@ export default function ResumeImproverPage() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleUploadSuccess = (text: string, resId: string, wCount: number) => {
+  const updateWordCount = (text: string) => {
     setResumeText(text)
-    setResumeId(resId)
-    setWordCount(wCount)
-    setError(null)
+    const words = text.trim().split(/\s+/).filter(word => word.length > 0).length
+    setWordCount(words)
   }
 
   return (
-    <div className="p-6 md:p-8 space-y-6 animate-fade-in">
-      <div className="animate-slide-up">
-        <h1 className="text-2xl md:text-3xl font-semibold text-black dark:text-white flex items-center gap-2 mb-2 tracking-tight">
-          <Brain className="w-6 h-6" />
-          AI Resume Improver
-        </h1>
-        <p className="text-neutral-500 dark:text-neutral-500 text-sm">
-          Enhance your resume with AI-powered suggestions
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Input Section */}
-        <Card
-          className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 lg:h-fit animate-slide-up"
-          style={{ animationDelay: "0.1s" }}
-        >
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base text-black dark:text-white">Your Resume</CardTitle>
-            <CardDescription className="text-xs text-neutral-500 dark:text-neutral-500">
-              Upload a PDF or paste your resume text
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <ResumeUploader onSuccess={handleUploadSuccess} onError={(msg) => setError(msg)} disabled={isLoading} />
-
-            <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
-              <span>or</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 p-6 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center gap-3">
+            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+              <Brain className="w-8 h-8 text-white" />
             </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              AI Resume Improver
+            </h1>
+          </div>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Enhance your resume with AI-powered suggestions and professional writing improvements
+          </p>
+        </div>
 
-            <div>
-              <Label htmlFor="resume" className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-                Resume Text ({wordCount} words)
-              </Label>
-              <Textarea
-                id="resume"
-                placeholder="Paste your resume here..."
-                value={resumeText}
-                onChange={(e) => setResumeText(e.target.value)}
-                className="mt-1.5 min-h-48 text-sm bg-neutral-50 dark:bg-black border-neutral-200 dark:border-neutral-800 resize-none focus:border-black dark:focus:border-white smooth-hover"
-              />
-              <p className="text-xs text-neutral-400 dark:text-neutral-600 mt-1">Minimum 100 words required</p>
-            </div>
-
-            <div>
-              <Label htmlFor="tone" className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-                Tone
-              </Label>
-              <Select value={tone} onValueChange={setTone}>
-                <SelectTrigger className="mt-1.5 h-9 text-sm bg-neutral-50 dark:bg-black border-neutral-200 dark:border-neutral-800 focus:border-black dark:focus:border-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="formal">Formal</SelectItem>
-                  <SelectItem value="conversational">Conversational</SelectItem>
-                  <SelectItem value="persuasive">Persuasive</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {error && <p className="text-xs text-neutral-500 dark:text-neutral-500">{error}</p>}
-
-            <Button
-              onClick={handleGenerate}
-              disabled={isLoading}
-              className="w-full h-9 text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 smooth-hover"
-            >
-              {isLoading && <Spinner className="mr-2 w-3.5 h-3.5" />}
-              {isLoading ? "Generating..." : "Generate Improvements"}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Results Section */}
-        <Card
-          className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 animate-slide-up"
-          style={{ animationDelay: "0.2s" }}
-        >
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base text-black dark:text-white">Improved Resume</CardTitle>
-            <CardDescription className="text-xs text-neutral-500 dark:text-neutral-500">
-              Your enhanced resume content
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="space-y-4 animate-fade-in">
-                {/* Loading State */}
-                <div className="text-center py-8">
-                  <Spinner className="w-8 h-8 mx-auto mb-4 text-black dark:text-white" />
-                  <p className="text-sm font-medium text-black dark:text-white mb-2">
-                    {
-                      [
-                        "Analyzing resume content...",
-                        "Identifying improvement areas...",
-                        "Generating enhanced version...",
-                        "Finalizing suggestions...",
-                      ][loadingStep]
-                    }
-                  </p>
-                  <div className="w-full max-w-xs mx-auto bg-neutral-200 dark:bg-neutral-800 rounded-full h-1.5 overflow-hidden">
-                    <div
-                      className="bg-black dark:bg-white h-full transition-all duration-500 ease-out"
-                      style={{ width: `${((loadingStep + 1) / 4) * 100}%` }}
-                    />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Input Card */}
+          <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl text-slate-800">Your Resume</CardTitle>
+                  <CardDescription className="text-slate-500">
+                    Paste your resume text and choose your preferred tone
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="resume" className="text-slate-700 font-medium flex items-center gap-2 mb-2">
+                    <FileText className="w-4 h-4 text-blue-500" />
+                    Resume Text
+                    <span className="text-sm text-slate-500 font-normal">
+                      ({wordCount} {wordCount === 1 ? 'word' : 'words'})
+                    </span>
+                  </Label>
+                  <Textarea
+                    id="resume"
+                    placeholder="Paste your resume content here... Include your experience, skills, education, and achievements. Minimum 100 words required."
+                    value={resumeText}
+                    onChange={(e) => updateWordCount(e.target.value)}
+                    className="min-h-48 bg-white border-slate-300 focus:border-blue-500 transition-colors resize-none placeholder:text-slate-400 text-sm"
+                  />
+                  <div className="flex justify-between items-center mt-2">
+                    <p className="text-xs text-slate-500">
+                      {wordCount >= 100 ? (
+                        <span className="text-green-600 font-medium">✓ Minimum word count met</span>
+                      ) : (
+                        <span>{100 - wordCount} more words needed</span>
+                      )}
+                    </p>
+                    <span className="text-xs text-slate-500">Minimum 100 words</span>
                   </div>
                 </div>
 
-                {/* Loading Skeleton */}
-                <div className="space-y-4 opacity-40">
-                  <div className="animate-pulse">
-                    <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-20 mb-2" />
-                    <div className="h-16 bg-neutral-200 dark:bg-neutral-800 rounded" />
+                <div>
+                  <Label htmlFor="tone" className="text-slate-700 font-medium flex items-center gap-2 mb-2">
+                    <Target className="w-4 h-4 text-green-500" />
+                    Writing Tone
+                  </Label>
+                  <Select value={tone} onValueChange={setTone}>
+                    <SelectTrigger className="bg-white border-slate-300 focus:border-green-500 transition-colors">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="formal">📝 Formal & Professional</SelectItem>
+                      <SelectItem value="conversational">💬 Conversational & Engaging</SelectItem>
+                      <SelectItem value="persuasive">🎯 Persuasive & Impactful</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-slate-500 mt-2">
+                    Choose the tone that best matches your industry and target roles
+                  </p>
+                </div>
+              </div>
+
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                    {error}
+                  </p>
+                </div>
+              )}
+
+              <Button
+                onClick={handleGenerate}
+                disabled={isLoading || wordCount < 100}
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-6 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                size="lg"
+              >
+                {isLoading ? (
+                  <>
+                    <Spinner className="mr-3" />
+                    Generating Improvements...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-3 w-5 h-5" />
+                    Improve My Resume
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Results Card */}
+          <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Sparkles className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl text-slate-800">Improved Resume</CardTitle>
+                  <CardDescription className="text-slate-500">
+                    Your enhanced resume with professional improvements
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="space-y-6 py-4">
+                  {/* Loading Progress */}
+                  <div className="text-center space-y-4">
+                    <Spinner className="w-8 h-8 mx-auto text-blue-500" />
+                    <div>
+                      <p className="font-semibold text-slate-700 mb-2">
+                        {[
+                          "Analyzing resume content...",
+                          "Identifying improvement areas...",
+                          "Generating enhanced version...",
+                          "Finalizing suggestions...",
+                        ][loadingStep]}
+                      </p>
+                      <div className="w-full max-w-md mx-auto bg-slate-200 rounded-full h-2 overflow-hidden">
+                        <div
+                          className="bg-gradient-to-r from-blue-500 to-purple-600 h-full transition-all duration-500 ease-out"
+                          style={{ width: `${((loadingStep + 1) / 4) * 100}%` }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="animate-pulse" style={{ animationDelay: "0.1s" }}>
-                    <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-32 mb-2" />
-                    <div className="h-40 bg-neutral-200 dark:bg-neutral-800 rounded" />
-                  </div>
-                  <div className="animate-pulse" style={{ animationDelay: "0.2s" }}>
-                    <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-24 mb-2" />
-                    <div className="space-y-2">
-                      <div className="h-20 bg-neutral-200 dark:bg-neutral-800 rounded" />
-                      <div className="h-20 bg-neutral-200 dark:bg-neutral-800 rounded" />
+
+                  {/* Loading Skeleton */}
+                  <div className="space-y-4 opacity-60">
+                    <div className="animate-pulse">
+                      <div className="h-4 bg-slate-200 rounded w-32 mb-3"></div>
+                      <div className="h-20 bg-slate-200 rounded"></div>
+                    </div>
+                    <div className="animate-pulse" style={{ animationDelay: '0.1s' }}>
+                      <div className="h-4 bg-slate-200 rounded w-40 mb-3"></div>
+                      <div className="h-48 bg-slate-200 rounded"></div>
+                    </div>
+                    <div className="animate-pulse" style={{ animationDelay: '0.2s' }}>
+                      <div className="h-4 bg-slate-200 rounded w-28 mb-3"></div>
+                      <div className="space-y-3">
+                        <div className="h-24 bg-slate-200 rounded"></div>
+                        <div className="h-24 bg-slate-200 rounded"></div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ) : !result ? (
-              <div className="text-center py-12 text-neutral-400 dark:text-neutral-600 text-sm">
-                Generate improvements to see results
-              </div>
-            ) : (
-              <div className="space-y-4 animate-fade-in">
-                <div className="animate-slide-up">
-                  <h3 className="text-sm font-medium text-black dark:text-white mb-1.5">Summary</h3>
-                  <p className="text-neutral-500 dark:text-neutral-500 text-xs leading-relaxed">{result.summary}</p>
-                </div>
-
-                <div className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-medium text-black dark:text-white">Improved Resume</h3>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleCopy(result.improved_resume)}
-                      className="gap-1.5 h-7 text-xs border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900 smooth-hover"
-                    >
-                      {copied ? (
-                        <>
-                          <Check className="w-3 h-3" />
-                          Copied
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3 h-3" />
-                          Copy
-                        </>
-                      )}
-                    </Button>
+              ) : !result ? (
+                <div className="text-center py-16 space-y-4">
+                  <div className="w-16 h-16 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center">
+                    <Sparkles className="w-8 h-8 text-slate-400" />
                   </div>
-                  <div className="bg-neutral-50 dark:bg-black p-3 rounded-lg max-h-80 overflow-y-auto border border-neutral-200 dark:border-neutral-800">
-                    <p className="text-xs text-black dark:text-white whitespace-pre-wrap leading-relaxed">
-                      {result.improved_resume}
+                  <div>
+                    <h3 className="font-semibold text-slate-700 mb-2">Your Improved Resume Awaits</h3>
+                    <p className="text-slate-500 text-sm max-w-sm mx-auto">
+                      Fill in your resume on the left and click "Improve My Resume" to see AI-powered enhancements and professional suggestions.
                     </p>
                   </div>
                 </div>
+              ) : (
+                <div className="space-y-6 animate-fade-in">
+                  {/* Summary */}
+                  <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-5">
+                    <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
+                      <Brain className="w-4 h-4 text-blue-500" />
+                      AI Analysis Summary
+                    </h3>
+                    <p className="text-sm text-slate-700 leading-relaxed">{result.summary}</p>
+                  </div>
 
-                {result.edits && result.edits.length > 0 && (
-                  <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
-                    <h3 className="text-sm font-medium text-black dark:text-white mb-2">Key Changes</h3>
-                    <div className="space-y-2">
-                      {result.edits.slice(0, 3).map((edit: any, i: number) => (
-                        <div
-                          key={i}
-                          className="bg-neutral-50 dark:bg-black p-3 rounded-lg border border-neutral-200 dark:border-neutral-800 animate-fade-in"
-                          style={{ animationDelay: `${i * 0.05}s` }}
-                        >
-                          <p className="text-xs text-neutral-400 dark:text-neutral-600 mb-1.5">{edit.reason}</p>
-                          <p className="text-xs line-through text-neutral-400 dark:text-neutral-600 mb-1">
-                            {edit.line_before}
-                          </p>
-                          <p className="text-xs text-black dark:text-white font-medium">{edit.line_after}</p>
-                        </div>
-                      ))}
+                  {/* Improved Resume */}
+                  <div className="animate-slide-up">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-semibold text-slate-800">Improved Resume</h3>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleCopy(result.improved_resume)}
+                        className="gap-2 border-slate-300 hover:bg-slate-50 text-slate-700"
+                      >
+                        {copied ? (
+                          <>
+                            <Check className="w-4 h-4" />
+                            Copied!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-4 h-4" />
+                            Copy
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    <div className="bg-white border border-slate-200 rounded-xl p-5 max-h-80 overflow-y-auto shadow-inner">
+                      <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
+                        {result.improved_resume}
+                      </p>
                     </div>
                   </div>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+
+                  {/* Key Changes */}
+                  {result.edits && result.edits.length > 0 && (
+                    <div className="animate-slide-up">
+                      <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
+                        <Target className="w-4 h-4 text-green-500" />
+                        Key Improvements Made
+                      </h3>
+                      <div className="space-y-3">
+                        {result.edits.slice(0, 3).map((edit: any, i: number) => (
+                          <div
+                            key={i}
+                            className="bg-green-50/50 border border-green-200 rounded-xl p-4 animate-fade-in"
+                            style={{ animationDelay: `${i * 0.1}s` }}
+                          >
+                            <p className="text-xs text-green-700 font-medium mb-2">{edit.reason}</p>
+                            <div className="space-y-2">
+                              <div className="flex items-start gap-2">
+                                <span className="text-xs text-red-500 mt-0.5">Before:</span>
+                                <p className="text-xs text-slate-600 line-through flex-1">{edit.line_before}</p>
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <span className="text-xs text-green-600 mt-0.5">After:</span>
+                                <p className="text-xs text-slate-800 font-medium flex-1">{edit.line_after}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+          <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm">
+            <div className="w-12 h-12 mx-auto bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+              <Brain className="w-6 h-6 text-blue-600" />
+            </div>
+            <h3 className="font-semibold text-slate-800 mb-2">AI-Powered Analysis</h3>
+            <p className="text-sm text-slate-600">Smart analysis of your resume content and structure</p>
+          </div>
+
+          <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm">
+            <div className="w-12 h-12 mx-auto bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+              <Target className="w-6 h-6 text-purple-600" />
+            </div>
+            <h3 className="font-semibold text-slate-800 mb-2">Tone Optimization</h3>
+            <p className="text-sm text-slate-600">Adapts writing style to match your preferred tone</p>
+          </div>
+
+          <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm">
+            <div className="w-12 h-12 mx-auto bg-green-100 rounded-xl flex items-center justify-center mb-4">
+              <Sparkles className="w-6 h-6 text-green-600" />
+            </div>
+            <h3 className="font-semibold text-slate-800 mb-2">Professional Enhancement</h3>
+            <p className="text-sm text-slate-600">Improves impact and readability while preserving your content</p>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -148,11 +148,10 @@ export default function StartAutoApplyPage() {
             <Zap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             <span className="text-sm font-medium text-black dark:text-white">Auto-Applying to Jobs</span>
             <span
-              className={`text-sm font-semibold px-3 py-1 rounded-full ${
-                timeRemaining > 60
-                  ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
-                  : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
-              }`}
+              className={`text-sm font-semibold px-3 py-1 rounded-full ${timeRemaining > 60
+                ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                }`}
             >
               {formatTime(timeRemaining)}
             </span>
@@ -168,9 +167,9 @@ export default function StartAutoApplyPage() {
         <div className="flex-1 overflow-hidden">
           <iframe
             ref={iframeRef}
-            src={`https://agent.steel.dev/?token=YOUR_STEEL_TOKEN&url=${encodeURIComponent(targetUrl)}&task=apply_jobs`}
+            src={`https://agent.steel.dev/?token=ste-jzsZ8AbnF9WsXwwMJ9BKtEEkRprGBxwjIdC7hlW6v5ldWNxdIVEn3aue4VOWSokeLGAf9JNI25wLhYW0ssqgGIdFLeGEJ6mK958&url=${encodeURIComponent(targetUrl)}&task=apply_jobs`}
             className="w-full h-full border-0"
-            title="Steel.dev Browser"
+            title="applyo.app Browser Automation"
             sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-scripts allow-forms allow-top-navigation"
           />
         </div>
