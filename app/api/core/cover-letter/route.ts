@@ -21,14 +21,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Build prompt
-    const prompt = `You are Applyo, a cover letter assistant for job seekers. Write a compelling cover letter based on the provided information. Return ONLY valid JSON with key "cover_letter" containing the letter text.
+    const prompt = `You are Applyo, an expert cover letter writer for job applications. Create a compelling, personalized cover letter that highlights the candidate's qualifications and enthusiasm for the position.
 
-Tone: ${tone}
-${resumeText ? `Resume:\n${resumeText}\n` : ""}
-Job Description:
+TASK: Write a professional cover letter that:
+1. Opens with a strong hook that captures attention
+2. Clearly connects the candidate's experience to the job requirements
+3. Demonstrates genuine interest in the role and company
+4. Closes with a confident call to action
+5. Maintains appropriate ${tone} tone throughout
+
+${resumeText ? `CANDIDATE'S RESUME/BACKGROUND:\n${resumeText}\n\n` : ""}
+
+JOB DESCRIPTION:
 ${jobDescription}
 
-Provide output as valid JSON only.`
+REQUIRED OUTPUT FORMAT (JSON only, no markdown):
+{
+  "cover_letter": "Complete cover letter text formatted with proper paragraphs. Include:\n- Opening paragraph with position title\n- 2-3 body paragraphs highlighting relevant experience\n- Closing paragraph with call to action\n- Professional sign-off"
+}
+
+Return ONLY valid JSON. No markdown, no code blocks, no additional text.`
 
     // Call Gemini
     const aiResponse = await callGemini(prompt)

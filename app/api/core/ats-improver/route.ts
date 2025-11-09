@@ -21,14 +21,33 @@ export async function POST(request: NextRequest) {
     }
 
     // Build prompt
-    const prompt = `You are Applyo, an ATS optimization specialist. Improve the resume to include the missing keywords while maintaining readability. Return ONLY valid JSON with keys "improved_resume" and "changes" (array of change explanations).
+    const prompt = `You are Applyo, an expert ATS (Applicant Tracking System) optimization specialist. Enhance the resume by strategically incorporating missing keywords while maintaining natural readability and professional quality.
 
-Missing Keywords to include: ${missingKeywords.join(", ")}
+TASK: Improve the resume to include the following keywords:
+${missingKeywords.length > 0 ? missingKeywords.join(", ") : "Optimize for general ATS compatibility"}
 
-Resume to improve:
+REQUIREMENTS:
+1. Naturally integrate keywords into existing content (don't just list them)
+2. Maintain the resume's professional tone and readability
+3. Ensure keywords fit contextually within job descriptions and achievements
+4. Keep the original structure and flow
+5. Don't sacrifice quality for keyword density
+
+ORIGINAL RESUME:
 ${resumeText}
 
-Provide output as valid JSON only.`
+REQUIRED OUTPUT FORMAT (JSON only, no markdown):
+{
+  "improved_resume": "Complete improved resume text with keywords naturally integrated",
+  "changes": [
+    "Explanation of change 1: where and how keyword was added",
+    "Explanation of change 2: where and how keyword was added",
+    "Explanation of change 3: where and how keyword was added"
+  ],
+  "keywords_added": ["keyword1", "keyword2", "keyword3"]
+}
+
+Return ONLY valid JSON. No markdown, no code blocks, no additional text.`
 
     // Call Gemini
     const aiResponse = await callGemini(prompt)
