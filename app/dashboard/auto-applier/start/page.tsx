@@ -1,19 +1,60 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
-import { Zap, AlertCircle, CheckCircle } from "lucide-react"
+import { Zap, AlertCircle, CheckCircle, X } from "lucide-react"
 
 export default function StartAutoApplyPage() {
   const [targetUrl, setTargetUrl] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
+  const [status, setStatus] = useState<"idle" | "success" | "error" | "applying">("idle")
   const [taskId, setTaskId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  const [isBrowserOpen, setIsBrowserOpen] = useState(false)
+  const [timeRemaining, setTimeRemaining] = useState(600) // 10 minutes in seconds
+  const [isApplying, setIsApplying] = useState(false)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
+  useEffect(() => {
+    if (!isApplying || timeRemaining <= 0) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+      }
+      if (timeRemaining <= 0 && isApplying) {
+        handleStopApplying()
+      }
+      return
+    }
+
+    timerRef.current = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          setIsApplying(false)
+          setIsBrowserOpen(false)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+      }
+    }
+  }, [isApplying, timeRemaining])
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, "0")}`
+  }
 
   const handleStartAutoApply = async () => {
     if (!targetUrl.trim()) {
@@ -23,7 +64,10 @@ export default function StartAutoApplyPage() {
 
     setIsLoading(true)
     setError(null)
-    setStatus("idle")
+    setStatus("applying")
+    setIsApplying(true)
+    setIsBrowserOpen(true)
+    setTimeRemaining(600)
 
     try {
       const response = await fetch("/api/auto/apply/start", {
@@ -37,6 +81,8 @@ export default function StartAutoApplyPage() {
       if (!response.ok) {
         setError(data.message || "Failed to start auto-apply")
         setStatus("error")
+        setIsApplying(false)
+        setIsBrowserOpen(false)
         return
       }
 
@@ -46,9 +92,58 @@ export default function StartAutoApplyPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
       setStatus("error")
+      setIsApplying(false)
+      setIsBrowserOpen(false)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleStopApplying = () => {
+    setIsApplying(false)
+    setIsBrowserOpen(false)
+    setTimeRemaining(600)
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+    }
+  }
+
+  if (isBrowserOpen && isApplying) {
+    return (
+      <div className="h-screen flex flex-col bg-neutral-50 dark:bg-black">
+        <div className="sticky top-0 z-50 flex items-center justify-between p-4 bg-white dark:bg-neutral-950 border-b border-neutral-200 dark:border-neutral-800">
+          <div className="flex items-center gap-3">
+            <Zap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm font-medium text-black dark:text-white">Auto-Applying to Jobs</span>
+            <span
+              className={`text-sm font-semibold px-3 py-1 rounded-full ${
+                timeRemaining > 60
+                  ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                  : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+              }`}
+            >
+              {formatTime(timeRemaining)}
+            </span>
+          </div>
+          <button
+            onClick={handleStopApplying}
+            className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5 text-black dark:text-white" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-hidden">
+          <iframe
+            ref={iframeRef}
+            src={`https://agent.steel.dev/?token=YOUR_STEEL_TOKEN&url=${encodeURIComponent(targetUrl)}&task=apply_jobs`}
+            className="w-full h-full border-0"
+            title="Steel.dev Browser"
+            sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-scripts allow-forms allow-top-navigation"
+          />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -100,7 +195,7 @@ export default function StartAutoApplyPage() {
                 <div className="space-y-1">
                   <p className="text-xs font-medium text-green-600 dark:text-green-400">Auto-apply job queued</p>
                   <p className="text-xs text-green-600 dark:text-green-400">Task ID: {taskId}</p>
-                  <p className="text-xs text-green-600 dark:text-green-400">Status: Queued</p>
+                  <p className="text-xs text-green-600 dark:text-green-400">Status: Active</p>
                 </div>
               </div>
             )}
@@ -122,9 +217,10 @@ export default function StartAutoApplyPage() {
           </CardHeader>
           <CardContent className="space-y-2 text-xs text-neutral-600 dark:text-neutral-400">
             <p>1. Enter the target job listing URL</p>
-            <p>2. The system will queue the auto-apply task</p>
-            <p>3. Applications are processed automatically</p>
-            <p>4. Track progress in your Activity Log</p>
+            <p>2. Click Start Auto-Apply to open the browser</p>
+            <p>3. You have 10 minutes to apply to jobs</p>
+            <p>4. Use the Stop button to exit early</p>
+            <p>5. Track all applications in your Activity Log</p>
           </CardContent>
         </Card>
       </div>
