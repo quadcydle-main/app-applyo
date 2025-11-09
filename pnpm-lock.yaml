@@ -135,7 +135,7 @@ importers:
         specifier: latest
         version: 2.4.5
       pdfjs-dist:
-        specifier: latest
+        specifier: 5.4.394
         version: 5.4.394
       react:
         specifier: 19.2.0
