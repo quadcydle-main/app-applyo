@@ -15,6 +15,8 @@
 
 [Features](#-features) • [Getting Started](#-getting-started) • [Architecture](#-architecture) • [Documentation](#-documentation) • [Contributing](#-contributing)
 
+🌐 **Live Website**: [applyo.app](https://applyo.app) | 🎨 **Landing Page Repo**: [landing_page_applyo](https://github.com/Tanmay692004/landing_page_applyo)
+
 </div>
 
 ---
