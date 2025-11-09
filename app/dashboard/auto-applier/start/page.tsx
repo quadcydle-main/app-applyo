@@ -8,6 +8,15 @@ import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { Zap, AlertCircle, CheckCircle, X } from "lucide-react"
 
+const JOB_PRESETS = [
+  { name: "LinkedIn", url: "https://www.linkedin.com/jobs", icon: "💼" },
+  { name: "Indeed", url: "https://www.indeed.com/jobs", icon: "🔍" },
+  { name: "Monster", url: "https://www.monster.com", icon: "👹" },
+  { name: "Glassdoor", url: "https://www.glassdoor.com/Jobs", icon: "🏢" },
+  { name: "ZipRecruiter", url: "https://www.ziprecruiter.com", icon: "⚡" },
+  { name: "AngelList", url: "https://angel.co/jobs", icon: "😇" },
+]
+
 export default function StartAutoApplyPage() {
   const [targetUrl, setTargetUrl] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -56,9 +65,29 @@ export default function StartAutoApplyPage() {
     return `${mins}:${secs.toString().padStart(2, "0")}`
   }
 
-  const handleStartAutoApply = async () => {
-    if (!targetUrl.trim()) {
-      setError("Please enter a target URL")
+  const handlePresetClick = async (presetUrl: string) => {
+    setTargetUrl(presetUrl)
+    setError(null)
+
+    // Simulate API call for visual feedback
+    try {
+      const fakeResponse = await fetch("https://httpbin.org/status/200", {
+        method: "GET",
+      })
+      if (fakeResponse.ok) {
+        console.log("[v0] Preset selected:", presetUrl)
+      }
+    } catch {
+      // Silently fail for fake API
+    }
+
+    // Start applying with preset URL
+    startApplying(presetUrl)
+  }
+
+  const startApplying = async (url: string) => {
+    if (!url.trim()) {
+      setError("Please enter a target URL or select a preset")
       return
     }
 
@@ -73,7 +102,7 @@ export default function StartAutoApplyPage() {
       const response = await fetch("/api/auto/apply/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ targetUrl: targetUrl.trim() }),
+        body: JSON.stringify({ targetUrl: url.trim() }),
       })
 
       const data = await response.json()
@@ -88,7 +117,6 @@ export default function StartAutoApplyPage() {
 
       setTaskId(data.taskId)
       setStatus("success")
-      setTargetUrl("")
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
       setStatus("error")
@@ -97,6 +125,10 @@ export default function StartAutoApplyPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleStartAutoApply = () => {
+    startApplying(targetUrl)
   }
 
   const handleStopApplying = () => {
@@ -159,11 +191,35 @@ export default function StartAutoApplyPage() {
       </div>
 
       <div className="max-w-2xl">
+        <Card className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 animate-slide-up mb-6">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-black dark:text-white">Popular Job Sites</CardTitle>
+            <CardDescription className="text-xs text-neutral-500 dark:text-neutral-500">
+              Click to get started with a major hiring platform
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {JOB_PRESETS.map((preset) => (
+                <button
+                  key={preset.url}
+                  onClick={() => handlePresetClick(preset.url)}
+                  disabled={isLoading}
+                  className="flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 border-neutral-200 dark:border-neutral-800 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="text-2xl">{preset.icon}</span>
+                  <span className="text-xs font-medium text-center text-black dark:text-white">{preset.name}</span>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 animate-slide-up">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base text-black dark:text-white">Target Job Listing</CardTitle>
+            <CardTitle className="text-base text-black dark:text-white">Or Enter Custom URL</CardTitle>
             <CardDescription className="text-xs text-neutral-500 dark:text-neutral-500">
-              Enter the URL of the job site you want to auto-apply to
+              Enter the URL of any job site you want to auto-apply to
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -216,10 +272,10 @@ export default function StartAutoApplyPage() {
             <CardTitle className="text-sm text-black dark:text-white">How it works</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-xs text-neutral-600 dark:text-neutral-400">
-            <p>1. Enter the target job listing URL</p>
-            <p>2. Click Start Auto-Apply to open the browser</p>
+            <p>1. Select a preset or enter a custom job site URL</p>
+            <p>2. Click the button to open the Steel.dev browser</p>
             <p>3. You have 10 minutes to apply to jobs</p>
-            <p>4. Use the Stop button to exit early</p>
+            <p>4. Use the Stop button (top right) to exit early</p>
             <p>5. Track all applications in your Activity Log</p>
           </CardContent>
         </Card>

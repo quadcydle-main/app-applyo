@@ -1,10 +1,27 @@
 "use client"
 
-// Simple fallback text extraction for cases where pdfjs isn't available
+// Clean and normalize text extracted from PDF to remove gibberish
+function cleanAndNormalizeText(text: string): string {
+  // Remove excessive whitespace and special characters
+  let cleaned = text
+    .replace(/\s+/g, " ") // Replace multiple spaces/newlines with single space
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "") // Remove control characters
+    .replace(/([^\w\s.,;:\-()&])\1{2,}/g, "$1") // Remove repeated special chars
+    .trim()
+
+  // Fix common gibberish patterns
+  cleaned = cleaned
+    .replace(/(\w)\1{3,}/g, "$1") // Replace multiple repeated letters (e.g., "aaaa" -> "a")
+    .replace(/\s+([.,:;])/g, "$1") // Remove space before punctuation
+    .replace(/([.,:;])\s+([.,:;])/g, "$1 ") // Fix multiple punctuation
+
+  return cleaned
+}
+
 async function extractTextWithFallback(file: File): Promise<string> {
   try {
     const text = await file.text()
-    return text
+    return cleanAndNormalizeText(text)
   } catch {
     return ""
   }
@@ -12,11 +29,11 @@ async function extractTextWithFallback(file: File): Promise<string> {
 
 export async function parsePDFText(file: File): Promise<{ text: string; wordCount: number }> {
   try {
-    // Dynamically import pdfjs on the client side
-    const { getDocument, GlobalWorkerOptions } = await import("pdfjs-dist")
+    const pdfjs = await import("pdfjs-dist")
+    const { getDocument, GlobalWorkerOptions } = pdfjs
 
-    // Set worker source for client-side parsing
-    GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${await import("pdfjs-dist/package.json").then(() => "4.0.379")}/pdf.worker.min.js`
+    // Use npm-bundled worker instead of CDN
+    GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.js", import.meta.url).toString()
 
     const arrayBuffer = await file.arrayBuffer()
     const pdf = await getDocument({ data: arrayBuffer }).promise
@@ -32,7 +49,7 @@ export async function parsePDFText(file: File): Promise<{ text: string; wordCoun
       fullText += pageText + "\n"
     }
 
-    const cleanedText = fullText.trim()
+    const cleanedText = cleanAndNormalizeText(fullText)
     const wordCount = countWords(cleanedText)
 
     return { text: cleanedText, wordCount }
