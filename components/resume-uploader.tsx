@@ -1,14 +1,14 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Upload, FileText, AlertCircle, CheckCircle } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
+import { extractTextFromPdf, validateResumeText } from "@/lib/utils/pdf-parser"
 
 interface ResumeUploaderProps {
-  onSuccess: (text: string, resumeId: string, wordCount: number) => void
+  onSuccess: (text: string, wordCount: number) => void
   onError: (message: string) => void
   disabled?: boolean
 }
@@ -30,33 +30,21 @@ export function ResumeUploader({ onSuccess, onError, disabled = false }: ResumeU
     setUploadStatus("idle")
 
     try {
-      const formData = new FormData()
-      formData.append("file", file)
+      const text = await extractTextFromPdf(file)
+      const validation = validateResumeText(text, 100)
 
-      const response = await fetch("/api/upload/resume", {
-        method: "POST",
-        body: formData,
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        if (data.errorCode === "TOO_SHORT") {
-          onError(data.message)
-        } else if (data.errorCode === "GIBBERISH_CONTENT") {
-          onError(data.message)
-        } else {
-          onError(data.error || "Upload failed")
-        }
+      if (!validation.valid) {
+        onError(validation.error || "Invalid resume")
         setUploadStatus("error")
+        setIsLoading(false)
         return
       }
 
       setFileName(file.name)
       setUploadStatus("success")
-      onSuccess(data.text, data.resumeId, data.wordCount)
+      onSuccess(text, validation.wordCount)
     } catch (err) {
-      onError(err instanceof Error ? err.message : "Upload failed")
+      onError(err instanceof Error ? err.message : "Failed to parse PDF")
       setUploadStatus("error")
     } finally {
       setIsLoading(false)
@@ -111,13 +99,13 @@ export function ResumeUploader({ onSuccess, onError, disabled = false }: ResumeU
         {uploadStatus === "success" ? (
           <div className="space-y-2">
             <CheckCircle className="w-8 h-8 text-green-600 mx-auto" />
-            <p className="text-sm font-medium text-black dark:text-white">Resume uploaded successfully</p>
+            <p className="text-sm font-medium text-black dark:text-white">Resume parsed successfully</p>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">{fileName}</p>
           </div>
         ) : uploadStatus === "error" ? (
           <div className="space-y-2">
             <AlertCircle className="w-8 h-8 text-red-600 mx-auto" />
-            <p className="text-sm font-medium text-black dark:text-white">Upload failed</p>
+            <p className="text-sm font-medium text-black dark:text-white">Parse failed</p>
             <Button
               variant="outline"
               size="sm"
@@ -135,7 +123,7 @@ export function ResumeUploader({ onSuccess, onError, disabled = false }: ResumeU
             {isLoading ? (
               <>
                 <Spinner className="w-6 h-6 mx-auto text-black dark:text-white" />
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">Processing PDF...</p>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">Parsing PDF...</p>
               </>
             ) : (
               <>

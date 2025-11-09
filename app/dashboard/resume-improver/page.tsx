@@ -27,12 +27,17 @@ export default function ResumeImproverPage() {
       return
     }
 
+    const words = resumeText.trim().split(/\s+/).length
+    if (words < 100) {
+      setError(`Resume must be at least 100 words. Current: ${words} words`)
+      return
+    }
+
     setIsLoading(true)
     setError(null)
     setResult(null)
     setLoadingStep(0)
 
-    // Simulate loading steps for real-time feedback
     const loadingSteps = [
       "Analyzing resume content...",
       "Identifying improvement areas...",
