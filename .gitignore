@@ -6,6 +6,8 @@
 # next.js
 /.next/
 /out/
+/steel-starter/
+venv
 
 # production
 /build

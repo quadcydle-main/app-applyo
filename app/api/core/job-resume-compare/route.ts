@@ -21,15 +21,41 @@ export async function POST(request: NextRequest) {
     }
 
     // Build prompt
-    const prompt = `You are Applyo, a job-resume matching specialist. Compare the resume against the job description and provide a detailed analysis. Return ONLY valid JSON with keys: "match_score" (0-100), "strengths" (array), "gaps" (array), "recommendations" (array).
+    const prompt = `You are Applyo, an expert career coach specializing in job-resume matching analysis. Provide a comprehensive comparison between the candidate's qualifications and job requirements.
 
-Job Description:
+TASK: Analyze the fit between the resume and job description:
+1. Calculate an overall match score (0-100)
+2. Identify key strengths that align with the role
+3. Identify skill/experience gaps
+4. Provide specific, actionable recommendations to improve the match
+
+JOB DESCRIPTION:
 ${jobDescription}
 
-Resume:
+CANDIDATE'S RESUME:
 ${resumeText}
 
-Provide output as valid JSON only.`
+REQUIRED OUTPUT FORMAT (JSON only, no markdown):
+{
+  "match_score": 75,
+  "strengths": [
+    "Specific strength 1 with evidence from resume",
+    "Specific strength 2 with evidence from resume",
+    "Specific strength 3 with evidence from resume"
+  ],
+  "gaps": [
+    "Specific gap 1 with job requirement",
+    "Specific gap 2 with job requirement",
+    "Specific gap 3 with job requirement"
+  ],
+  "recommendations": [
+    "Actionable recommendation 1 to bridge a gap",
+    "Actionable recommendation 2 to emphasize a strength",
+    "Actionable recommendation 3 for overall improvement"
+  ]
+}
+
+Return ONLY valid JSON. No markdown, no code blocks, no additional text.`
 
     // Call Gemini
     const aiResponse = await callGemini(prompt)

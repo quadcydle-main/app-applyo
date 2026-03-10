@@ -21,14 +21,33 @@ export async function POST(request: NextRequest) {
     }
 
     // Build prompt
-    const prompt = `You are Applyo, an interview prep specialist. Generate realistic interview questions based on the job description. Return ONLY valid JSON with key "questions" (array of 5-10 interview questions with suggested answers).
+    const prompt = `You are Applyo, an expert interview preparation coach. Generate realistic, insightful interview questions based on the job requirements and provide strategic answer frameworks.
 
-Difficulty: ${difficulty}
-${resumeText ? `Candidate Resume:\n${resumeText}\n` : ""}
-Job Description:
+TASK: Create 8-10 interview questions that:
+1. Cover technical skills, behavioral situations, and role-specific scenarios
+2. Reflect actual questions asked for this type of position
+3. Include a mix of easy, medium, and hard questions based on difficulty: ${difficulty}
+4. Provide strategic answer frameworks (not full answers, but key points to include)
+
+${resumeText ? `CANDIDATE'S BACKGROUND:\n${resumeText}\n\n` : ""}
+
+JOB DESCRIPTION:
 ${jobDescription}
 
-Provide output as valid JSON only.`
+REQUIRED OUTPUT FORMAT (JSON only, no markdown):
+{
+  "questions": [
+    {
+      "question": "The interview question text",
+      "type": "technical|behavioral|situational",
+      "difficulty": "easy|medium|hard",
+      "answer_framework": "Key points to include: 1) Point one 2) Point two 3) Point three",
+      "why_asked": "Brief explanation of what the interviewer is trying to assess"
+    }
+  ]
+}
+
+Return ONLY valid JSON. No markdown, no code blocks, no additional text.`
 
     // Call Gemini
     const aiResponse = await callGemini(prompt)
