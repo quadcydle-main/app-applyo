@@ -18,7 +18,6 @@
 🌐 **Live Website**: [applyo.app](https://applyo.app) | 🎨 **Landing Page Repo**: [landing_page_applyo](https://github.com/Tanmay692004/landing_page_applyo)
 
 </div>
-
 ---
 
 ## 📋 Table of Contents
