@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { Sparkles } from "lucide-react"
+import { Sparkles, ArrowLeft } from "lucide-react"
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("")
@@ -28,6 +28,12 @@ export default function SignUpPage() {
 
     if (password !== repeatPassword) {
       setError("Passwords do not match")
+      setIsLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters")
       setIsLoading(false)
       return
     }
@@ -50,23 +56,35 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-background to-card">
-      <div className="w-full max-w-sm">
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <Sparkles className="w-6 h-6 text-primary" />
-          <span className="text-2xl font-bold text-foreground">Applyo</span>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background animate-fade-in">
+      <div className="w-full max-w-md">
+        {/* Back to home */}
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground smooth-hover mb-8">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back to home
+        </Link>
+
+        <div className="flex items-center justify-center gap-2.5 mb-8 animate-slide-down">
+          <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
+            <Sparkles className="w-4.5 h-4.5 text-primary-foreground" />
+          </div>
+          <span className="text-xl font-bold tracking-tight text-foreground">Applyo</span>
         </div>
 
-        <Card className="border-border bg-card">
-          <CardHeader>
-            <CardTitle className="text-2xl">Create Account</CardTitle>
-            <CardDescription>Join thousands of job seekers using Applyo</CardDescription>
+        <Card className="border-border bg-card shadow-xl shadow-primary/5 animate-slide-up">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-2xl font-bold text-foreground">Create Account</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground">
+              Join thousands of job seekers using Applyo
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignUp}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+              <div className="flex flex-col gap-4">
+                <div className="grid gap-1.5">
+                  <Label htmlFor="email" className="text-xs font-medium text-foreground">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -74,39 +92,52 @@ export default function SignUpPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-background border-border"
+                    className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
+                <div className="grid gap-1.5">
+                  <Label htmlFor="password" className="text-xs font-medium text-foreground">
+                    Password
+                  </Label>
                   <Input
                     id="password"
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-background border-border"
+                    className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
+                    placeholder="Min 6 characters"
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
+                <div className="grid gap-1.5">
+                  <Label htmlFor="repeat-password" className="text-xs font-medium text-foreground">
+                    Confirm Password
+                  </Label>
                   <Input
                     id="repeat-password"
                     type="password"
                     required
                     value={repeatPassword}
                     onChange={(e) => setRepeatPassword(e.target.value)}
-                    className="bg-background border-border"
+                    className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
                   />
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Creating account..." : "Sign Up"}
+                {error && (
+                  <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                    <p className="text-xs text-destructive">{error}</p>
+                  </div>
+                )}
+                <Button
+                  type="submit"
+                  className="w-full h-10 text-sm bg-primary text-primary-foreground hover:bg-primary/90 smooth-hover font-medium"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
               </div>
-              <div className="mt-4 text-center text-sm text-muted-foreground">
+              <div className="mt-4 text-center text-xs text-muted-foreground">
                 Already have an account?{" "}
-                <Link href="/auth/login" className="text-primary hover:underline">
+                <Link href="/auth/login" className="text-primary hover:underline font-medium">
                   Login
                 </Link>
               </div>

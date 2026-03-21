@@ -36,18 +36,8 @@ export default function ResumeImproverPage() {
     setResult(null)
     setLoadingStep(0)
 
-    const loadingSteps = [
-      "Analyzing resume content...",
-      "Identifying improvement areas...",
-      "Generating enhanced version...",
-      "Finalizing suggestions...",
-    ]
-
     const stepInterval = setInterval(() => {
-      setLoadingStep((prev) => {
-        if (prev < loadingSteps.length - 1) return prev + 1
-        return prev
-      })
+      setLoadingStep((prev) => (prev < 3 ? prev + 1 : prev))
     }, 1000)
 
     try {
@@ -84,112 +74,95 @@ export default function ResumeImproverPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 p-6 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="p-6 md:p-8 animate-fade-in">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-3">
-            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-              <Brain className="w-8 h-8 text-white" />
+        <div className="animate-slide-up">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 bg-orange-100 dark:bg-orange-950/50 rounded-xl flex items-center justify-center">
+              <Brain className="w-5 h-5 text-orange-600 dark:text-orange-400" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              AI Resume Improver
-            </h1>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">AI Resume Improver</h1>
+              <p className="text-sm text-muted-foreground">Enhance your resume with AI-powered suggestions</p>
+            </div>
           </div>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Enhance your resume with AI-powered suggestions and professional writing improvements
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Input Card */}
-          <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="bg-card border-border animate-slide-up" style={{ animationDelay: "0.05s" }}>
             <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <FileText className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl text-slate-800">Your Resume</CardTitle>
-                  <CardDescription className="text-slate-500">
-                    Paste your resume text and choose your preferred tone
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
+                <FileText className="w-4 h-4 text-primary" />
+                Your Resume
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">
+                Paste your resume text and choose your preferred tone
+              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="resume" className="text-slate-700 font-medium flex items-center gap-2 mb-2">
-                    <FileText className="w-4 h-4 text-blue-500" />
-                    Resume Text
-                    <span className="text-sm text-slate-500 font-normal">
-                      ({wordCount} {wordCount === 1 ? 'word' : 'words'})
-                    </span>
-                  </Label>
-                  <Textarea
-                    id="resume"
-                    placeholder="Paste your resume content here... Include your experience, skills, education, and achievements. Minimum 100 words required."
-                    value={resumeText}
-                    onChange={(e) => updateWordCount(e.target.value)}
-                    className="min-h-48 bg-white border-slate-300 focus:border-blue-500 transition-colors resize-none placeholder:text-slate-400 text-sm"
-                  />
-                  <div className="flex justify-between items-center mt-2">
-                    <p className="text-xs text-slate-500">
-                      {wordCount >= 100 ? (
-                        <span className="text-green-600 font-medium">✓ Minimum word count met</span>
-                      ) : (
-                        <span>{100 - wordCount} more words needed</span>
-                      )}
-                    </p>
-                    <span className="text-xs text-slate-500">Minimum 100 words</span>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="tone" className="text-slate-700 font-medium flex items-center gap-2 mb-2">
-                    <Target className="w-4 h-4 text-green-500" />
-                    Writing Tone
-                  </Label>
-                  <Select value={tone} onValueChange={setTone}>
-                    <SelectTrigger className="bg-white border-slate-300 focus:border-green-500 transition-colors">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="formal">📝 Formal & Professional</SelectItem>
-                      <SelectItem value="conversational">💬 Conversational & Engaging</SelectItem>
-                      <SelectItem value="persuasive">🎯 Persuasive & Impactful</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-slate-500 mt-2">
-                    Choose the tone that best matches your industry and target roles
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="resume" className="text-xs font-medium text-foreground flex items-center gap-2 mb-1.5">
+                  Resume Text
+                  <span className="text-muted-foreground font-normal">
+                    ({wordCount} {wordCount === 1 ? 'word' : 'words'})
+                  </span>
+                </Label>
+                <Textarea
+                  id="resume"
+                  placeholder="Paste your resume content here... Include your experience, skills, education, and achievements. Minimum 100 words required."
+                  value={resumeText}
+                  onChange={(e) => updateWordCount(e.target.value)}
+                  className="min-h-48 bg-muted border-border focus:border-primary resize-none placeholder:text-muted-foreground text-sm smooth-hover"
+                />
+                <div className="flex justify-between items-center mt-1.5">
+                  <p className="text-xs text-muted-foreground">
+                    {wordCount >= 100 ? (
+                      <span className="text-emerald-600 dark:text-emerald-400 font-medium">Minimum word count met</span>
+                    ) : (
+                      <span>{100 - wordCount} more words needed</span>
+                    )}
                   </p>
                 </div>
+              </div>
+
+              <div>
+                <Label htmlFor="tone" className="text-xs font-medium text-foreground flex items-center gap-2 mb-1.5">
+                  <Target className="w-3.5 h-3.5 text-muted-foreground" />
+                  Writing Tone
+                </Label>
+                <Select value={tone} onValueChange={setTone}>
+                  <SelectTrigger className="h-10 bg-muted border-border focus:border-primary text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="formal">Formal & Professional</SelectItem>
+                    <SelectItem value="conversational">Conversational & Engaging</SelectItem>
+                    <SelectItem value="persuasive">Persuasive & Impactful</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-red-500 rounded-full"></span>
-                    {error}
-                  </p>
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <p className="text-xs text-destructive">{error}</p>
                 </div>
               )}
 
               <Button
                 onClick={handleGenerate}
                 disabled={isLoading || wordCount < 100}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 py-6 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                size="lg"
+                className="w-full h-10 text-sm bg-primary text-primary-foreground hover:bg-primary/90 smooth-hover font-medium"
               >
                 {isLoading ? (
                   <>
-                    <Spinner className="mr-3" />
+                    <Spinner className="mr-2" />
                     Generating Improvements...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="mr-3 w-5 h-5" />
+                    <Sparkles className="mr-2 w-4 h-4" />
                     Improve My Resume
                   </>
                 )}
@@ -198,139 +171,102 @@ export default function ResumeImproverPage() {
           </Card>
 
           {/* Results Card */}
-          <Card className="bg-white/80 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="bg-card border-border animate-slide-up" style={{ animationDelay: "0.1s" }}>
             <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Sparkles className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <CardTitle className="text-2xl text-slate-800">Improved Resume</CardTitle>
-                  <CardDescription className="text-slate-500">
-                    Your enhanced resume with professional improvements
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Improved Resume
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">
+                Your enhanced resume with professional improvements
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading ? (
                 <div className="space-y-6 py-4">
-                  {/* Loading Progress */}
                   <div className="text-center space-y-4">
-                    <Spinner className="w-8 h-8 mx-auto text-blue-500" />
+                    <Spinner className="w-8 h-8 mx-auto text-primary" />
                     <div>
-                      <p className="font-semibold text-slate-700 mb-2">
-                        {[
-                          "Analyzing resume content...",
-                          "Identifying improvement areas...",
-                          "Generating enhanced version...",
-                          "Finalizing suggestions...",
-                        ][loadingStep]}
+                      <p className="font-medium text-foreground text-sm mb-3">
+                        {["Analyzing resume content...", "Identifying improvement areas...", "Generating enhanced version...", "Finalizing suggestions..."][loadingStep]}
                       </p>
-                      <div className="w-full max-w-md mx-auto bg-slate-200 rounded-full h-2 overflow-hidden">
+                      <div className="w-full max-w-md mx-auto bg-muted rounded-full h-2 overflow-hidden">
                         <div
-                          className="bg-gradient-to-r from-blue-500 to-purple-600 h-full transition-all duration-500 ease-out"
+                          className="bg-primary h-full transition-all duration-500 ease-out rounded-full"
                           style={{ width: `${((loadingStep + 1) / 4) * 100}%` }}
                         />
                       </div>
                     </div>
                   </div>
-
-                  {/* Loading Skeleton */}
-                  <div className="space-y-4 opacity-60">
-                    <div className="animate-pulse">
-                      <div className="h-4 bg-slate-200 rounded w-32 mb-3"></div>
-                      <div className="h-20 bg-slate-200 rounded"></div>
-                    </div>
-                    <div className="animate-pulse" style={{ animationDelay: '0.1s' }}>
-                      <div className="h-4 bg-slate-200 rounded w-40 mb-3"></div>
-                      <div className="h-48 bg-slate-200 rounded"></div>
-                    </div>
-                    <div className="animate-pulse" style={{ animationDelay: '0.2s' }}>
-                      <div className="h-4 bg-slate-200 rounded w-28 mb-3"></div>
-                      <div className="space-y-3">
-                        <div className="h-24 bg-slate-200 rounded"></div>
-                        <div className="h-24 bg-slate-200 rounded"></div>
+                  <div className="space-y-3 opacity-60">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="animate-pulse">
+                        <div className="h-4 bg-muted rounded w-32 mb-2" />
+                        <div className="h-16 bg-muted rounded" />
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               ) : !result ? (
                 <div className="text-center py-16 space-y-4">
-                  <div className="w-16 h-16 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center">
-                    <Sparkles className="w-8 h-8 text-slate-400" />
+                  <div className="w-14 h-14 mx-auto bg-muted rounded-2xl flex items-center justify-center">
+                    <Sparkles className="w-7 h-7 text-muted-foreground" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-slate-700 mb-2">Your Improved Resume Awaits</h3>
-                    <p className="text-slate-500 text-sm max-w-sm mx-auto">
-                      Fill in your resume on the left and click "Improve My Resume" to see AI-powered enhancements and professional suggestions.
+                    <h3 className="font-medium text-foreground mb-1 text-sm">Your Improved Resume Awaits</h3>
+                    <p className="text-muted-foreground text-xs max-w-sm mx-auto">
+                      Fill in your resume on the left and click "Improve My Resume" to see AI-powered enhancements.
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-6 animate-fade-in">
+                <div className="space-y-4 animate-fade-in">
                   {/* Summary */}
-                  <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-5">
-                    <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
-                      <Brain className="w-4 h-4 text-blue-500" />
+                  <div className="bg-primary/5 border border-primary/15 rounded-xl p-4">
+                    <h3 className="text-xs font-semibold text-foreground flex items-center gap-2 mb-2">
+                      <Brain className="w-3.5 h-3.5 text-primary" />
                       AI Analysis Summary
                     </h3>
-                    <p className="text-sm text-slate-700 leading-relaxed">{result.summary}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{result.summary}</p>
                   </div>
 
                   {/* Improved Resume */}
-                  <div className="animate-slide-up">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-slate-800">Improved Resume</h3>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xs font-semibold text-foreground">Improved Resume</h3>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleCopy(result.improved_resume)}
-                        className="gap-2 border-slate-300 hover:bg-slate-50 text-slate-700"
+                        className="gap-1.5 h-7 text-xs border-border hover:bg-muted smooth-hover"
                       >
-                        {copied ? (
-                          <>
-                            <Check className="w-4 h-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-4 h-4" />
-                            Copy
-                          </>
-                        )}
+                        {copied ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy</>}
                       </Button>
                     </div>
-                    <div className="bg-white border border-slate-200 rounded-xl p-5 max-h-80 overflow-y-auto shadow-inner">
-                      <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
-                        {result.improved_resume}
-                      </p>
+                    <div className="bg-muted border border-border rounded-xl p-4 max-h-72 overflow-y-auto">
+                      <p className="text-xs text-foreground whitespace-pre-wrap leading-relaxed">{result.improved_resume}</p>
                     </div>
                   </div>
 
                   {/* Key Changes */}
                   {result.edits && result.edits.length > 0 && (
-                    <div className="animate-slide-up">
-                      <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
-                        <Target className="w-4 h-4 text-green-500" />
+                    <div>
+                      <h3 className="text-xs font-semibold text-foreground flex items-center gap-2 mb-2">
+                        <Target className="w-3.5 h-3.5 text-primary" />
                         Key Improvements Made
                       </h3>
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         {result.edits.slice(0, 3).map((edit: any, i: number) => (
-                          <div
-                            key={i}
-                            className="bg-green-50/50 border border-green-200 rounded-xl p-4 animate-fade-in"
-                            style={{ animationDelay: `${i * 0.1}s` }}
-                          >
-                            <p className="text-xs text-green-700 font-medium mb-2">{edit.reason}</p>
-                            <div className="space-y-2">
+                          <div key={i} className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 rounded-lg p-3 animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
+                            <p className="text-xs text-emerald-700 dark:text-emerald-300 font-medium mb-1.5">{edit.reason}</p>
+                            <div className="space-y-1">
                               <div className="flex items-start gap-2">
-                                <span className="text-xs text-red-500 mt-0.5">Before:</span>
-                                <p className="text-xs text-slate-600 line-through flex-1">{edit.line_before}</p>
+                                <span className="text-[10px] text-destructive mt-0.5 font-medium">Before:</span>
+                                <p className="text-[11px] text-muted-foreground line-through flex-1">{edit.line_before}</p>
                               </div>
                               <div className="flex items-start gap-2">
-                                <span className="text-xs text-green-600 mt-0.5">After:</span>
-                                <p className="text-xs text-slate-800 font-medium flex-1">{edit.line_after}</p>
+                                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium">After:</span>
+                                <p className="text-[11px] text-foreground font-medium flex-1">{edit.line_after}</p>
                               </div>
                             </div>
                           </div>
@@ -342,33 +278,6 @@ export default function ResumeImproverPage() {
               )}
             </CardContent>
           </Card>
-        </div>
-
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm">
-            <div className="w-12 h-12 mx-auto bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-              <Brain className="w-6 h-6 text-blue-600" />
-            </div>
-            <h3 className="font-semibold text-slate-800 mb-2">AI-Powered Analysis</h3>
-            <p className="text-sm text-slate-600">Smart analysis of your resume content and structure</p>
-          </div>
-
-          <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm">
-            <div className="w-12 h-12 mx-auto bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-              <Target className="w-6 h-6 text-purple-600" />
-            </div>
-            <h3 className="font-semibold text-slate-800 mb-2">Tone Optimization</h3>
-            <p className="text-sm text-slate-600">Adapts writing style to match your preferred tone</p>
-          </div>
-
-          <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm">
-            <div className="w-12 h-12 mx-auto bg-green-100 rounded-xl flex items-center justify-center mb-4">
-              <Sparkles className="w-6 h-6 text-green-600" />
-            </div>
-            <h3 className="font-semibold text-slate-800 mb-2">Professional Enhancement</h3>
-            <p className="text-sm text-slate-600">Improves impact and readability while preserving your content</p>
-          </div>
         </div>
       </div>
     </div>

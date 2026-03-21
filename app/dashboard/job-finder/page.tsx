@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
-import { Briefcase } from "lucide-react"
+import { Briefcase, MapPin, Search, TrendingUp } from "lucide-react"
 import { ResumeUploader } from "@/components/resume-uploader"
 
 export default function JobFinderPage() {
@@ -55,93 +55,139 @@ export default function JobFinderPage() {
   }
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-semibold text-black dark:text-white flex items-center gap-2 mb-2">
-          <Briefcase className="w-6 h-6" />
-          Job Finder
-        </h1>
-        <p className="text-neutral-500 text-sm">Discover job opportunities matching your profile</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base text-black dark:text-white">Search Criteria</CardTitle>
-            <CardDescription className="text-xs text-neutral-500">Find matching opportunities</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <ResumeUploader
-              onSuccess={(text) => {
-                setResumeText(text)
-                setError(null)
-              }}
-              onError={(msg) => setError(msg)}
-              disabled={isLoading}
-            />
-
-            <div>
-              <Label htmlFor="title" className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-                Job Title
-              </Label>
-              <Input
-                id="title"
-                placeholder="e.g., Frontend Developer"
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
-                className="mt-1.5 text-sm"
-              />
+    <div className="p-6 md:p-8 animate-fade-in">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="animate-slide-up">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950/50 rounded-xl flex items-center justify-center">
+              <Briefcase className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
-
             <div>
-              <Label htmlFor="location" className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-                Location (Optional)
-              </Label>
-              <Input
-                id="location"
-                placeholder="e.g., Remote, New York, India"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="mt-1.5 text-sm"
-              />
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">Job Finder</h1>
+              <p className="text-sm text-muted-foreground">Discover job opportunities matching your profile</p>
             </div>
+          </div>
+        </div>
 
-            {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-
-            <Button onClick={handleGenerate} disabled={isLoading} className="w-full h-9 text-sm">
-              {isLoading && <Spinner className="mr-2 w-3.5 h-3.5" />}
-              {isLoading ? "Searching..." : "Find Opportunities"}
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base text-black dark:text-white">Job Matches</CardTitle>
-            <CardDescription className="text-xs text-neutral-500">Opportunities for you</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="text-center py-8">
-                <Spinner className="w-8 h-8 mx-auto mb-4" />
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">Finding jobs...</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="bg-card border-border animate-slide-up" style={{ animationDelay: "0.05s" }}>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
+                <Search className="w-4 h-4 text-primary" />
+                Search Criteria
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">Find matching opportunities</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-xs font-medium text-foreground mb-1.5 block">Your Resume</Label>
+                <ResumeUploader
+                  onSuccess={(text) => {
+                    setResumeText(text)
+                    setError(null)
+                  }}
+                  onError={(msg) => setError(msg)}
+                  disabled={isLoading}
+                />
               </div>
-            ) : !result ? (
-              <div className="text-center py-12 text-neutral-400 text-sm">Results will appear here</div>
-            ) : (
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {result.opportunities?.map((job: any, i: number) => (
-                  <div key={i} className="border border-neutral-200 dark:border-neutral-800 p-3 rounded">
-                    <h4 className="text-sm font-medium text-black dark:text-white">{job.title}</h4>
-                    <p className="text-xs text-neutral-600 dark:text-neutral-400">{job.company}</p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-500 mt-1">{job.location}</p>
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">Match: {job.match_score}%</p>
+
+              <div>
+                <Label htmlFor="title" className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+                  <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
+                  Job Title
+                </Label>
+                <Input
+                  id="title"
+                  placeholder="e.g., Frontend Developer"
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                  className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="location" className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
+                  Location <span className="text-muted-foreground font-normal">(Optional)</span>
+                </Label>
+                <Input
+                  id="location"
+                  placeholder="e.g., Remote, New York, India"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
+                />
+              </div>
+
+              {error && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <p className="text-xs text-destructive">{error}</p>
+                </div>
+              )}
+
+              <Button
+                onClick={handleGenerate}
+                disabled={isLoading}
+                className="w-full h-10 text-sm bg-primary text-primary-foreground hover:bg-primary/90 smooth-hover font-medium"
+              >
+                {isLoading && <Spinner className="mr-2 w-3.5 h-3.5" />}
+                {isLoading ? "Searching..." : "Find Opportunities"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-border animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-primary" />
+                Job Matches
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">Opportunities for you</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="text-center py-12">
+                  <Spinner className="w-8 h-8 mx-auto mb-3 text-primary" />
+                  <p className="text-sm text-muted-foreground">Finding jobs...</p>
+                </div>
+              ) : !result ? (
+                <div className="text-center py-16 space-y-4">
+                  <div className="w-14 h-14 mx-auto bg-muted rounded-2xl flex items-center justify-center">
+                    <Search className="w-7 h-7 text-muted-foreground" />
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  <div>
+                    <h3 className="font-medium text-foreground mb-1 text-sm">Results Will Appear Here</h3>
+                    <p className="text-muted-foreground text-xs">Upload your resume and search for jobs</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-125 overflow-y-auto">
+                  {result.opportunities?.map((job: any, i: number) => (
+                    <div
+                      key={i}
+                      className="border border-border bg-muted/50 p-4 rounded-xl smooth-hover hover:border-primary/20 animate-fade-in"
+                      style={{ animationDelay: `${i * 0.05}s` }}
+                    >
+                      <h4 className="text-sm font-medium text-foreground">{job.title}</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5">{job.company}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          {job.location}
+                        </p>
+                        <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                          <TrendingUp className="w-3 h-3" />
+                          {job.match_score}% match
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )

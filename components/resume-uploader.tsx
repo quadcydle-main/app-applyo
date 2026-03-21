@@ -81,10 +81,10 @@ export function ResumeUploader({ onSuccess, onError, disabled = false }: ResumeU
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+        className={`relative border-2 border-dashed rounded-xl p-6 text-center smooth-hover ${
           isDragActive
-            ? "border-black dark:border-white bg-neutral-100 dark:bg-neutral-900"
-            : "border-neutral-300 dark:border-neutral-700"
+            ? "border-primary bg-primary/5"
+            : "border-border hover:border-primary/30"
         } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
       >
         <input
@@ -98,14 +98,11 @@ export function ResumeUploader({ onSuccess, onError, disabled = false }: ResumeU
 
         {uploadStatus === "success" ? (
           <div className="space-y-2">
-            <CheckCircle className="w-8 h-8 text-green-600 mx-auto" />
-            <p className="text-sm font-medium text-black dark:text-white">Resume parsed successfully</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">{fileName}</p>
-          </div>
-        ) : uploadStatus === "error" ? (
-          <div className="space-y-2">
-            <AlertCircle className="w-8 h-8 text-red-600 mx-auto" />
-            <p className="text-sm font-medium text-black dark:text-white">Parse failed</p>
+            <div className="w-10 h-10 mx-auto bg-emerald-100 dark:bg-emerald-950/50 rounded-xl flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <p className="text-sm font-medium text-foreground">Resume parsed successfully</p>
+            <p className="text-xs text-muted-foreground">{fileName}</p>
             <Button
               variant="outline"
               size="sm"
@@ -113,7 +110,25 @@ export function ResumeUploader({ onSuccess, onError, disabled = false }: ResumeU
                 setUploadStatus("idle")
                 fileInputRef.current?.click()
               }}
-              className="text-xs"
+              className="text-xs h-7 border-border hover:bg-muted smooth-hover"
+            >
+              Upload different file
+            </Button>
+          </div>
+        ) : uploadStatus === "error" ? (
+          <div className="space-y-2">
+            <div className="w-10 h-10 mx-auto bg-destructive/10 rounded-xl flex items-center justify-center">
+              <AlertCircle className="w-5 h-5 text-destructive" />
+            </div>
+            <p className="text-sm font-medium text-foreground">Parse failed</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setUploadStatus("idle")
+                fileInputRef.current?.click()
+              }}
+              className="text-xs h-7 border-border hover:bg-muted smooth-hover"
             >
               Try again
             </Button>
@@ -122,18 +137,25 @@ export function ResumeUploader({ onSuccess, onError, disabled = false }: ResumeU
           <div className="space-y-3">
             {isLoading ? (
               <>
-                <Spinner className="w-6 h-6 mx-auto text-black dark:text-white" />
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">Parsing PDF...</p>
+                <Spinner className="w-6 h-6 mx-auto text-primary" />
+                <p className="text-sm text-muted-foreground">Parsing PDF...</p>
               </>
             ) : (
               <>
-                <Upload className="w-6 h-6 mx-auto text-neutral-600 dark:text-neutral-400" />
-                <div>
-                  <p className="text-sm font-medium text-black dark:text-white">Drag & drop your resume PDF</p>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">or click to select</p>
+                <div className="w-10 h-10 mx-auto bg-muted rounded-xl flex items-center justify-center">
+                  <Upload className="w-5 h-5 text-muted-foreground" />
                 </div>
-                <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} className="text-xs">
-                  <FileText className="w-3 h-3 mr-1.5" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Drag & drop your resume PDF</p>
+                  <p className="text-xs text-muted-foreground">or click to select</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-xs h-7 border-border hover:bg-muted smooth-hover gap-1.5"
+                >
+                  <FileText className="w-3 h-3" />
                   Choose File
                 </Button>
               </>

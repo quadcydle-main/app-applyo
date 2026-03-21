@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { User } from "lucide-react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { User, Check, Mail, Briefcase } from "lucide-react"
 
 export default function ProfilePage() {
   const [fullName, setFullName] = useState("")
@@ -14,6 +15,7 @@ export default function ProfilePage() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -44,71 +46,116 @@ export default function ProfilePage() {
     if (!user) return
 
     setIsSaving(true)
+    setSaveSuccess(false)
     const { error } = await supabase.from("profiles").upsert({ id: user.id, full_name: fullName, headline }).select()
 
     setIsSaving(false)
     if (!error) {
-      // Show success feedback (optional)
+      setSaveSuccess(true)
+      setTimeout(() => setSaveSuccess(false), 3000)
     }
   }
 
   return (
-    <div className="p-6 md:p-12 space-y-8 max-w-2xl">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-          <User className="w-8 h-8 text-primary" />
+    <div className="p-6 md:p-8 space-y-6 max-w-2xl animate-fade-in">
+      <div className="animate-slide-up">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2 mb-1 tracking-tight">
+          <User className="w-6 h-6 text-primary" />
           Profile
         </h1>
-        <p className="text-muted-foreground mt-2">Manage your Applyo profile</p>
+        <p className="text-muted-foreground text-sm">Manage your Applyo profile</p>
       </div>
 
-      <Card className="bg-card border-border">
-        <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
-          <CardDescription>Update your profile details</CardDescription>
+      {/* Avatar Section */}
+      <Card className="bg-card border-border animate-slide-up" style={{ animationDelay: "0.05s" }}>
+        <CardContent className="p-6 flex items-center gap-5">
+          <Avatar className="h-16 w-16 bg-primary">
+            <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold">
+              {fullName ? fullName[0]?.toUpperCase() : email?.[0]?.toUpperCase() || "U"}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">{fullName || "Your Name"}</h2>
+            <p className="text-sm text-muted-foreground">{headline || "Add a professional headline"}</p>
+            <p className="text-xs text-muted-foreground mt-1">{email}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Profile Form */}
+      <Card className="bg-card border-border animate-slide-up" style={{ animationDelay: "0.1s" }}>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-base text-foreground">Profile Information</CardTitle>
+          <CardDescription className="text-xs text-muted-foreground">Update your profile details</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {isLoading ? (
-            <p className="text-muted-foreground">Loading...</p>
+            <div className="space-y-4">
+              <div className="h-10 bg-muted animate-pulse rounded-lg" />
+              <div className="h-10 bg-muted animate-pulse rounded-lg" />
+              <div className="h-10 bg-muted animate-pulse rounded-lg" />
+            </div>
           ) : (
             <>
-              <div>
-                <Label htmlFor="email">Email</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-muted-foreground" />
+                  Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   disabled
-                  className="mt-2 bg-background border-border text-muted-foreground"
+                  className="h-10 text-sm bg-muted border-border text-muted-foreground"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="fullName">Full Name</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="fullName" className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-muted-foreground" />
+                  Full Name
+                </Label>
                 <Input
                   id="fullName"
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="John Doe"
-                  className="mt-2 bg-background border-border"
+                  className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="headline">Professional Headline</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="headline" className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                  <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
+                  Professional Headline
+                </Label>
                 <Input
                   id="headline"
                   type="text"
                   value={headline}
                   onChange={(e) => setHeadline(e.target.value)}
                   placeholder="e.g., Full-Stack Developer | React Specialist"
-                  className="mt-2 bg-background border-border"
+                  className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
                 />
               </div>
 
-              <Button onClick={handleSave} disabled={isSaving} className="w-full">
-                {isSaving ? "Saving..." : "Save Changes"}
+              <Button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="w-full h-10 text-sm bg-primary text-primary-foreground hover:bg-primary/90 smooth-hover font-medium"
+              >
+                {saveSuccess ? (
+                  <span className="flex items-center gap-2">
+                    <Check className="w-4 h-4" />
+                    Saved Successfully
+                  </span>
+                ) : isSaving ? (
+                  "Saving..."
+                ) : (
+                  "Save Changes"
+                )}
               </Button>
             </>
           )}

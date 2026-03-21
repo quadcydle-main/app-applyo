@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ChevronDown, ChevronLeft, ChevronRight, Brain, Briefcase, User, LogOut, Sparkles } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight, Brain, Briefcase, User, LogOut, Sparkles, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { sidebarData } from "@/lib/utils/sidebar-data"
 import { createClient } from "@/lib/supabase/client"
@@ -13,6 +13,7 @@ const iconMap = {
   Brain: <Brain className="w-4 h-4" />,
   Briefcase: <Briefcase className="w-4 h-4" />,
   User: <User className="w-4 h-4" />,
+  Zap: <Zap className="w-4 h-4" />,
 }
 
 export function Sidebar() {
@@ -39,25 +40,25 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`h-screen bg-white dark:bg-black border-r border-neutral-200 dark:border-neutral-800 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col ${
+      className={`h-screen bg-card border-r border-border transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col ${
         isCollapsed ? "w-16" : "w-60"
       } animate-fade-in`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-4 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="flex items-center justify-between px-4 py-4 border-b border-border">
         {!isCollapsed && (
           <div className="flex items-center gap-2 animate-fade-in">
-            <div className="w-6 h-6 bg-black dark:bg-white rounded-md flex items-center justify-center">
-              <Sparkles className="w-3.5 h-3.5 text-white dark:text-black" />
+            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+              <Sparkles className="w-3.5 h-3.5 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-base tracking-tight text-black dark:text-white">Applyo</span>
+            <span className="font-bold text-base tracking-tight text-foreground">Applyo</span>
           </div>
         )}
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="h-7 w-7 text-neutral-500 dark:text-neutral-500 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 smooth-hover"
+          className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted smooth-hover"
         >
           {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
         </Button>
@@ -69,12 +70,12 @@ export function Sidebar() {
           <div key={group.id} className="animate-slide-up" style={{ animationDelay: `${groupIndex * 0.05}s` }}>
             <button
               onClick={() => toggleGroup(group.id)}
-              className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-md text-sm transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg text-sm transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isCollapsed ? "justify-center" : ""
               } ${
                 expandedGroups.has(group.id)
-                  ? "bg-black dark:bg-white text-white dark:text-black"
-                  : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-black dark:hover:text-white"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
               title={isCollapsed ? group.title : ""}
             >
@@ -105,8 +106,8 @@ export function Sidebar() {
                       <button
                         className={`w-full text-left px-2.5 py-1.5 rounded-md text-sm transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] animate-fade-in ${
                           isActive
-                            ? "bg-black dark:bg-white text-white dark:text-black font-medium"
-                            : "text-neutral-500 dark:text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-black dark:hover:text-white hover:translate-x-0.5"
+                            ? "bg-secondary text-secondary-foreground font-medium border border-primary/20"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground hover:translate-x-0.5"
                         }`}
                         style={{ animationDelay: `${childIndex * 0.03}s` }}
                       >
@@ -122,12 +123,12 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-neutral-200 dark:border-neutral-800 px-3 py-3">
+      <div className="border-t border-border px-3 py-3">
         <Button
           variant="ghost"
           size="sm"
           onClick={handleLogout}
-          className="w-full h-8 text-neutral-500 dark:text-neutral-500 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 justify-start gap-2 smooth-hover text-sm"
+          className="w-full h-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 justify-start gap-2 smooth-hover text-sm"
         >
           <LogOut className="w-3.5 h-3.5" />
           {!isCollapsed && "Logout"}

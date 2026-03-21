@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
-import { Brain, Copy } from "lucide-react"
+import { Brain, Copy, Check, MessageSquare } from "lucide-react"
 
 export default function InterviewQuestionsPage() {
   const [jobDescription, setJobDescription] = useState("")
@@ -16,6 +16,7 @@ export default function InterviewQuestionsPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
   const handleGenerate = async () => {
     if (!jobDescription.trim()) {
@@ -48,107 +49,143 @@ export default function InterviewQuestionsPage() {
     }
   }
 
-  const handleCopy = (text: string) => {
+  const handleCopy = (text: string, index: number) => {
     navigator.clipboard.writeText(text)
+    setCopiedIndex(index)
+    setTimeout(() => setCopiedIndex(null), 2000)
   }
 
   return (
-    <div className="p-6 md:p-12 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-          <Brain className="w-8 h-8 text-primary" />
-          Interview Question Generator
-        </h1>
-        <p className="text-muted-foreground mt-2">Prepare for interviews with AI-generated questions</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="bg-card border-border lg:h-fit">
-          <CardHeader>
-            <CardTitle>Generate Questions</CardTitle>
-            <CardDescription>Prepare for your interview</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="jd">Job Description</Label>
-              <Textarea
-                id="jd"
-                placeholder="Paste the job description..."
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                className="mt-2 min-h-40 bg-background border-border resize-none"
-              />
+    <div className="p-6 md:p-8 animate-fade-in">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="animate-slide-up">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-950/50 rounded-xl flex items-center justify-center">
+              <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
-
             <div>
-              <Label htmlFor="resume">Your Resume (Optional)</Label>
-              <Textarea
-                id="resume"
-                placeholder="Paste your resume for personalized questions..."
-                value={resumeText}
-                onChange={(e) => setResumeText(e.target.value)}
-                className="mt-2 min-h-32 bg-background border-border resize-none"
-              />
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">Interview Question Generator</h1>
+              <p className="text-sm text-muted-foreground">Prepare for interviews with AI-generated questions</p>
             </div>
+          </div>
+        </div>
 
-            <div>
-              <Label htmlFor="difficulty">Difficulty Level</Label>
-              <Select value={difficulty} onValueChange={setDifficulty}>
-                <SelectTrigger className="mt-2 bg-background border-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="easy">Easy</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="hard">Hard</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {error && <p className="text-sm text-red-500">{error}</p>}
-
-            <Button onClick={handleGenerate} disabled={isLoading} className="w-full" size="lg">
-              {isLoading && <Spinner className="mr-2" />}
-              {isLoading ? "Generating..." : "Generate Questions"}
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <CardTitle>Interview Prep</CardTitle>
-            <CardDescription>Practice with these questions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {!result || !result.questions ? (
-              <div className="text-center py-12 text-muted-foreground">Generate questions to practice</div>
-            ) : (
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {result.questions.map((q: any, i: number) => (
-                  <div key={i} className="bg-background p-4 rounded-lg border border-border">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-semibold text-foreground text-sm">
-                        Q{i + 1}: {q.question || q}
-                      </h3>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleCopy(typeof q === "string" ? q : JSON.stringify(q))}
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    {q.suggested_answer && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        <strong>Suggested answer:</strong> {q.suggested_answer}
-                      </p>
-                    )}
-                  </div>
-                ))}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="bg-card border-border lg:h-fit animate-slide-up" style={{ animationDelay: "0.05s" }}>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-primary" />
+                Generate Questions
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">Prepare for your interview</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="jd" className="text-xs font-medium text-foreground mb-1.5 block">Job Description</Label>
+                <Textarea
+                  id="jd"
+                  placeholder="Paste the job description..."
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  className="min-h-36 bg-muted border-border resize-none focus:border-primary text-sm smooth-hover"
+                />
               </div>
-            )}
-          </CardContent>
-        </Card>
+
+              <div>
+                <Label htmlFor="resume" className="text-xs font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+                  Your Resume <span className="text-muted-foreground font-normal">(Optional)</span>
+                </Label>
+                <Textarea
+                  id="resume"
+                  placeholder="Paste your resume for personalized questions..."
+                  value={resumeText}
+                  onChange={(e) => setResumeText(e.target.value)}
+                  className="min-h-28 bg-muted border-border resize-none focus:border-primary text-sm smooth-hover"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="difficulty" className="text-xs font-medium text-foreground mb-1.5 block">Difficulty Level</Label>
+                <Select value={difficulty} onValueChange={setDifficulty}>
+                  <SelectTrigger className="h-10 bg-muted border-border focus:border-primary text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="easy">Easy</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="hard">Hard</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {error && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <p className="text-xs text-destructive">{error}</p>
+                </div>
+              )}
+
+              <Button
+                onClick={handleGenerate}
+                disabled={isLoading}
+                className="w-full h-10 text-sm bg-primary text-primary-foreground hover:bg-primary/90 smooth-hover font-medium"
+              >
+                {isLoading && <Spinner className="mr-2" />}
+                {isLoading ? "Generating..." : "Generate Questions"}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-border animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
+                <Brain className="w-4 h-4 text-primary" />
+                Interview Prep
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">Practice with these questions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {!result || !result.questions ? (
+                <div className="text-center py-16 space-y-4">
+                  <div className="w-14 h-14 mx-auto bg-muted rounded-2xl flex items-center justify-center">
+                    <MessageSquare className="w-7 h-7 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-foreground mb-1 text-sm">Questions Will Appear Here</h3>
+                    <p className="text-muted-foreground text-xs max-w-sm mx-auto">Generate questions to start practicing</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-150 overflow-y-auto">
+                  {result.questions.map((q: any, i: number) => (
+                    <div key={i} className="bg-muted border border-border p-4 rounded-xl animate-fade-in smooth-hover hover:border-primary/20" style={{ animationDelay: `${i * 0.05}s` }}>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className="font-medium text-foreground text-sm leading-snug">
+                          <span className="text-primary font-semibold">Q{i + 1}:</span> {q.question || q}
+                        </h3>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleCopy(typeof q === "string" ? q : JSON.stringify(q), i)}
+                          className="h-7 w-7 p-0 shrink-0 text-muted-foreground hover:text-primary"
+                        >
+                          {copiedIndex === i ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                        </Button>
+                      </div>
+                      {q.suggested_answer && (
+                        <div className="mt-2 pt-2 border-t border-border">
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            <span className="font-medium text-foreground">Suggested answer:</span> {q.suggested_answer}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { Sparkles } from "lucide-react"
+import { Sparkles, ArrowLeft } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -40,19 +40,25 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-white dark:bg-black animate-fade-in">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background animate-fade-in">
       <div className="w-full max-w-md">
-        <div className="flex items-center justify-center gap-2 mb-8 animate-slide-down">
-          <div className="w-7 h-7 bg-black dark:bg-white rounded-lg flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white dark:text-black" />
+        {/* Back to home */}
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground smooth-hover mb-8">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back to home
+        </Link>
+
+        <div className="flex items-center justify-center gap-2.5 mb-8 animate-slide-down">
+          <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
+            <Sparkles className="w-4.5 h-4.5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-semibold tracking-tight text-black dark:text-white">Applyo</span>
+          <span className="text-xl font-bold tracking-tight text-foreground">Applyo</span>
         </div>
 
-        <Card className="border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 animate-slide-up">
+        <Card className="border-border bg-card shadow-xl shadow-primary/5 animate-slide-up">
           <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl text-black dark:text-white">Welcome Back</CardTitle>
-            <CardDescription className="text-sm text-neutral-500 dark:text-neutral-500">
+            <CardTitle className="text-2xl font-bold text-foreground">Welcome Back</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground">
               Enter your credentials to access your dashboard
             </CardDescription>
           </CardHeader>
@@ -60,7 +66,7 @@ export default function LoginPage() {
             <form onSubmit={handleLogin}>
               <div className="flex flex-col gap-4">
                 <div className="grid gap-1.5">
-                  <Label htmlFor="email" className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
+                  <Label htmlFor="email" className="text-xs font-medium text-foreground">
                     Email
                   </Label>
                   <Input
@@ -70,11 +76,11 @@ export default function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-9 text-sm bg-neutral-50 dark:bg-black border-neutral-200 dark:border-neutral-800 focus:border-black dark:focus:border-white smooth-hover"
+                    className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
                   />
                 </div>
                 <div className="grid gap-1.5">
-                  <Label htmlFor="password" className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
+                  <Label htmlFor="password" className="text-xs font-medium text-foreground">
                     Password
                   </Label>
                   <Input
@@ -83,21 +89,25 @@ export default function LoginPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-9 text-sm bg-neutral-50 dark:bg-black border-neutral-200 dark:border-neutral-800 focus:border-black dark:focus:border-white smooth-hover"
+                    className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
                   />
                 </div>
-                {error && <p className="text-xs text-neutral-500 dark:text-neutral-500">{error}</p>}
-                <Button 
-                  type="submit" 
-                  className="w-full h-9 text-sm bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 smooth-hover" 
+                {error && (
+                  <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                    <p className="text-xs text-destructive">{error}</p>
+                  </div>
+                )}
+                <Button
+                  type="submit"
+                  className="w-full h-10 text-sm bg-primary text-primary-foreground hover:bg-primary/90 smooth-hover font-medium"
                   disabled={isLoading}
                 >
                   {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
               </div>
-              <div className="mt-4 text-center text-xs text-neutral-500 dark:text-neutral-500">
+              <div className="mt-4 text-center text-xs text-muted-foreground">
                 Don't have an account?{" "}
-                <Link href="/auth/sign-up" className="text-black dark:text-white hover:underline font-medium">
+                <Link href="/auth/sign-up" className="text-primary hover:underline font-medium">
                   Sign up
                 </Link>
               </div>
