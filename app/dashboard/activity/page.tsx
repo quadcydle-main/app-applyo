@@ -17,6 +17,7 @@ export default function ActivityPage() {
         data: { user },
       } = await supabase.auth.getUser()
       if (!user) return
+      
 
       const { data, error } = await supabase
         .from("activity_log")
