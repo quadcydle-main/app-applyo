@@ -16,6 +16,7 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [repeatPassword, setRepeatPassword] = useState("")
+  const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -34,6 +35,12 @@ export default function SignUpPage() {
 
     if (password.length < 6) {
       setError("Password must be at least 6 characters")
+      setIsLoading(false)
+      return
+    }
+
+    if (!agreed) {
+      setError("Please accept the Terms of Service and Privacy Policy to continue")
       setIsLoading(false)
       return
     }
@@ -122,6 +129,24 @@ export default function SignUpPage() {
                     className="h-10 text-sm bg-muted border-border focus:border-primary smooth-hover"
                   />
                 </div>
+                {/* Privacy acceptance */}
+                <div className="flex items-start gap-2.5">
+                  <input
+                    id="agree"
+                    type="checkbox"
+                    checked={agreed}
+                    onChange={(e) => setAgreed(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 accent-primary cursor-pointer"
+                  />
+                  <label htmlFor="agree" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                    I agree to Applyo&apos;s{" "}
+                    <Link href="/terms" className="text-primary hover:underline font-medium" target="_blank">Terms of Service</Link>
+                    {" "}and{" "}
+                    <Link href="/privacy" className="text-primary hover:underline font-medium" target="_blank">Privacy Policy</Link>
+                    . My data is stored securely in Supabase and never sold.
+                  </label>
+                </div>
+
                 {error && (
                   <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                     <p className="text-xs text-destructive">{error}</p>

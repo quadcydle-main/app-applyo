@@ -1,7 +1,17 @@
 import { updateSession } from "@/lib/supabase/middleware"
-import type { NextRequest } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname
+
+  // Public routes — no auth required
+  if (
+    path.startsWith("/demo") ||
+    path === "/privacy" ||
+    path === "/terms"
+  ) {
+    return NextResponse.next()
+  }
   return await updateSession(request)
 }
 

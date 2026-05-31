@@ -1,0 +1,49 @@
+import type React from "react"
+import { Sidebar } from "@/components/sidebar"
+import { DemoBanner } from "@/components/demo-banner"
+import { DemoTutorial, TutorialRestartButton } from "@/components/demo-tutorial"
+import { DEMO_USER } from "@/lib/demo/data"
+
+function DemoTopbar() {
+  return (
+    <div className="h-14 border-b border-border bg-card flex items-center justify-between px-6 animate-slide-down">
+      <div className="flex items-center gap-4 flex-1 max-w-2xl">
+        <div className="relative flex-1 max-w-sm">
+          <input
+            disabled
+            placeholder="Search features..."
+            className="w-full pl-9 h-9 bg-muted border border-border rounded-md text-sm text-muted-foreground cursor-not-allowed opacity-60"
+          />
+        </div>
+      </div>
+      <div className="flex items-center gap-4">
+        <TutorialRestartButton />
+        <div className="flex items-center gap-2 p-1.5 rounded-lg">
+          <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center">
+            <span className="text-primary-foreground text-xs font-semibold">{DEMO_USER.initials}</span>
+          </div>
+          <div className="hidden md:flex flex-col items-start">
+            <span className="text-xs font-medium text-foreground leading-tight">{DEMO_USER.name}</span>
+            <span className="text-[10px] text-muted-foreground leading-tight">{DEMO_USER.email}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function DemoLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col h-screen">
+      <DemoBanner />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar basePath="/demo" isDemo />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <DemoTopbar />
+          <main className="flex-1 overflow-y-auto bg-background">{children}</main>
+        </div>
+      </div>
+      <DemoTutorial />
+    </div>
+  )
+}
