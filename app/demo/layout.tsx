@@ -2,22 +2,20 @@ import type React from "react"
 import { Sidebar } from "@/components/sidebar"
 import { DemoBanner } from "@/components/demo-banner"
 import { DemoTutorial, TutorialRestartButton } from "@/components/demo-tutorial"
+import { ThemeCustomizer } from "@/components/theme-customizer"
+import { HelpAssistant } from "@/components/help-assistant"
+import { CommandPalette } from "@/components/command-palette"
 import { DEMO_USER } from "@/lib/demo/data"
 
 function DemoTopbar() {
   return (
     <div className="h-14 border-b border-border bg-card flex items-center justify-between px-6 animate-slide-down">
       <div className="flex items-center gap-4 flex-1 max-w-2xl">
-        <div className="relative flex-1 max-w-sm">
-          <input
-            disabled
-            placeholder="Search features..."
-            className="w-full pl-9 h-9 bg-muted border border-border rounded-md text-sm text-muted-foreground cursor-not-allowed opacity-60"
-          />
-        </div>
+        <CommandPalette basePath="/demo" />
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <TutorialRestartButton />
+        <ThemeCustomizer />
         <div className="flex items-center gap-2 p-1.5 rounded-lg">
           <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center">
             <span className="text-primary-foreground text-xs font-semibold">{DEMO_USER.initials}</span>
@@ -44,6 +42,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
         </div>
       </div>
       <DemoTutorial />
+      <HelpAssistant basePath="/demo" />
     </div>
   )
 }

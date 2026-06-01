@@ -324,3 +324,86 @@ export const DEMO_STATS = {
   resumes: 3,
   coverLetters: 7,
 }
+
+// ─── Recruiter Hub (Enterprise) demo data ───────────────────
+export const DEMO_RECRUITER = {
+  name: "Sarah Johnson",
+  initials: "SJ",
+  title: "Senior Technical Recruiter",
+  company: "Acme Technologies",
+  email: "sarah.johnson@acme.tech",
+  website: "acme.tech/careers",
+  about:
+    "We're building the future of developer tooling. Always looking for exceptional frontend and full-stack engineers who care about craft, performance, and accessibility.",
+  hiringFor: ["Senior Frontend Engineer", "Staff Engineer", "Engineering Manager", "Product Designer"],
+  locations: ["Remote (US)", "San Francisco, CA", "New York, NY"],
+  perks: ["Top-of-market comp + equity", "Remote-first", "Learning budget", "4-day onboarding"],
+}
+
+export const DEMO_RECRUITER_STATS = {
+  talentPool: 1284,
+  newThisWeek: 47,
+  shortlisted: 12,
+  activeRoles: 4,
+}
+
+export const DEMO_CANDIDATES = [
+  {
+    id: "c1", name: "John Doe", initials: "JD", headline: "Senior Software Engineer",
+    location: "Remote (US)", experience: "6 yrs", match: 94, atsScore: 88, status: "new",
+    skills: ["React", "TypeScript", "Next.js", "GraphQL", "AWS"],
+    summary: "6+ years building scalable web apps. Led microservices migration cutting latency 45%.",
+    openToWork: true, salary: "$150K–$180K",
+  },
+  {
+    id: "c2", name: "Maria Garcia", initials: "MG", headline: "Staff Frontend Engineer",
+    location: "San Francisco, CA", experience: "9 yrs", match: 91, atsScore: 92, status: "shortlisted",
+    skills: ["React", "Vue", "TypeScript", "Design Systems", "WCAG"],
+    summary: "Design-systems expert. Shipped component libraries used by 40+ teams.",
+    openToWork: true, salary: "$190K–$220K",
+  },
+  {
+    id: "c3", name: "David Chen", initials: "DC", headline: "Full-Stack Engineer",
+    location: "New York, NY", experience: "5 yrs", match: 86, atsScore: 81, status: "new",
+    skills: ["Node.js", "React", "PostgreSQL", "Docker", "GraphQL"],
+    summary: "Full-stack generalist who ships fast. Built payment pipeline handling $2M/day.",
+    openToWork: true, salary: "$140K–$165K",
+  },
+  {
+    id: "c4", name: "Aisha Patel", initials: "AP", headline: "Senior Product Designer",
+    location: "Remote (US)", experience: "7 yrs", match: 83, atsScore: 79, status: "new",
+    skills: ["Figma", "Design Systems", "User Research", "Prototyping"],
+    summary: "Product designer bridging design and engineering. Accessibility advocate.",
+    openToWork: true, salary: "$135K–$160K",
+  },
+  {
+    id: "c5", name: "Tom Wright", initials: "TW", headline: "Engineering Manager",
+    location: "Remote (US)", experience: "11 yrs", match: 80, atsScore: 84, status: "contacted",
+    skills: ["Leadership", "React", "Hiring", "Architecture", "Mentoring"],
+    summary: "Built and led teams of 12+. Player-coach who still ships code.",
+    openToWork: false, salary: "$210K–$250K",
+  },
+]
+
+export const DEMO_RECRUITER_APPLICATIONS = [
+  {
+    id: "a1", candidate: "John Doe", initials: "JD", role: "Senior Frontend Engineer",
+    appliedDate: "2025-05-28", match: 94, atsScore: 88, stage: "review",
+    note: "Strong React + perf background. Move to phone screen.",
+  },
+  {
+    id: "a2", candidate: "Maria Garcia", initials: "MG", role: "Staff Engineer",
+    appliedDate: "2025-05-27", match: 91, atsScore: 92, stage: "shortlist",
+    note: "Excellent design-systems fit. Fast-track.",
+  },
+  {
+    id: "a3", candidate: "David Chen", initials: "DC", role: "Senior Frontend Engineer",
+    appliedDate: "2025-05-26", match: 86, atsScore: 81, stage: "review",
+    note: "",
+  },
+  {
+    id: "a4", candidate: "Aisha Patel", initials: "AP", role: "Product Designer",
+    appliedDate: "2025-05-24", match: 83, atsScore: 79, stage: "review",
+    note: "",
+  },
+]

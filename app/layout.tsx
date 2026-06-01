@@ -20,9 +20,14 @@ export const metadata: Metadata = {
   },
 }
 
+const themeScript = `(function(){try{var t=localStorage.getItem('applyo-theme')||'mocha';var d=document.documentElement;d.setAttribute('data-theme',t);if(t==='custom'){var h=localStorage.getItem('applyo-theme-custom'),f=localStorage.getItem('applyo-theme-customfg')||'#fff';if(h){var s=d.style;s.setProperty('--primary',h);s.setProperty('--primary-foreground',f);s.setProperty('--ring',h);s.setProperty('--sidebar-primary',h);s.setProperty('--sidebar-ring',h);s.setProperty('--secondary','color-mix(in srgb, '+h+' 16%, var(--background))');s.setProperty('--secondary-foreground',h);s.setProperty('--accent','color-mix(in srgb, '+h+' 14%, var(--background))');s.setProperty('--accent-foreground',h);s.setProperty('--sidebar-accent','color-mix(in srgb, '+h+' 14%, var(--background))');s.setProperty('--sidebar-accent-foreground',h);}}}catch(e){}})();`
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`} data-theme="mocha">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="font-sans bg-background text-foreground antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
           {children}

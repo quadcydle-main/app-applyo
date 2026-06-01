@@ -243,7 +243,15 @@
 
   /* Skeleton loading */
   .skeleton {
-    @apply animate-shimmer rounded-md;
+    border-radius: var(--radius-md);
+    animation: shimmer 2s linear infinite;
+    background-size: 200% 100%;
+    background-image: linear-gradient(
+      90deg,
+      var(--muted) 25%,
+      var(--accent) 50%,
+      var(--muted) 75%
+    );
   }
 
   /* Smooth border/bg */
@@ -337,4 +345,138 @@
 ::selection {
   background: var(--primary);
   color: var(--primary-foreground);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THEME PRESETS — set via [data-theme] on <html>.
+   Each preset retints the accent colors for light + dark.
+   Default (no attribute) = Caffeine amber brand.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Caffeine (default, refined amber) ───────────────────── */
+[data-theme="caffeine"] {
+  --primary: #b45309; --primary-foreground: #fff; --ring: #b45309;
+  --secondary: #fdecd8; --secondary-foreground: #7c3a09;
+  --accent: #fbe3c8; --accent-foreground: #7c3a09;
+  --sidebar-primary: #b45309; --sidebar-ring: #b45309;
+  --sidebar-accent: #fbe3c8; --sidebar-accent-foreground: #7c3a09;
+}
+.dark[data-theme="caffeine"] {
+  --primary: #f59e0b; --primary-foreground: #1a1205; --ring: #f59e0b;
+  --secondary: #2a1f12; --secondary-foreground: #fcd9a8;
+  --accent: #2a1f12; --accent-foreground: #fcd9a8;
+  --sidebar-primary: #f59e0b; --sidebar-ring: #f59e0b;
+  --sidebar-accent: #2a1f12; --sidebar-accent-foreground: #fcd9a8;
+}
+
+/* ── Mocha (coffee brown) ────────────────────────────────── */
+[data-theme="mocha"] {
+  --primary: #8a5a44; --primary-foreground: #fff; --ring: #8a5a44;
+  --secondary: #f1e8e2; --secondary-foreground: #5a3a2a;
+  --accent: #ece0d8; --accent-foreground: #5a3a2a;
+  --sidebar-primary: #8a5a44; --sidebar-ring: #8a5a44;
+  --sidebar-accent: #ece0d8; --sidebar-accent-foreground: #5a3a2a;
+}
+.dark[data-theme="mocha"] {
+  --primary: #b08968; --primary-foreground: #1a1410; --ring: #b08968;
+  --secondary: #2a201a; --secondary-foreground: #e8d5c4;
+  --accent: #2a201a; --accent-foreground: #e8d5c4;
+  --sidebar-primary: #b08968; --sidebar-ring: #b08968;
+  --sidebar-accent: #2a201a; --sidebar-accent-foreground: #e8d5c4;
+}
+
+/* ── Cat Meow (playful pink) ─────────────────────────────── */
+[data-theme="catmeow"] {
+  --primary: #db2777; --primary-foreground: #fff; --ring: #db2777;
+  --secondary: #fce7f3; --secondary-foreground: #9d174d;
+  --accent: #fbd5e8; --accent-foreground: #9d174d;
+  --sidebar-primary: #db2777; --sidebar-ring: #db2777;
+  --sidebar-accent: #fbd5e8; --sidebar-accent-foreground: #9d174d;
+}
+.dark[data-theme="catmeow"] {
+  --primary: #f472b6; --primary-foreground: #2a0a18; --ring: #f472b6;
+  --secondary: #2e1320; --secondary-foreground: #fbcfe8;
+  --accent: #2e1320; --accent-foreground: #fbcfe8;
+  --sidebar-primary: #f472b6; --sidebar-ring: #f472b6;
+  --sidebar-accent: #2e1320; --sidebar-accent-foreground: #fbcfe8;
+}
+
+/* ── Matcha (green) ──────────────────────────────────────── */
+[data-theme="matcha"] {
+  --primary: #4d7c0f; --primary-foreground: #fff; --ring: #4d7c0f;
+  --secondary: #ecfccb; --secondary-foreground: #3f6212;
+  --accent: #e2f7bd; --accent-foreground: #3f6212;
+  --sidebar-primary: #4d7c0f; --sidebar-ring: #4d7c0f;
+  --sidebar-accent: #e2f7bd; --sidebar-accent-foreground: #3f6212;
+}
+.dark[data-theme="matcha"] {
+  --primary: #84cc16; --primary-foreground: #14210a; --ring: #84cc16;
+  --secondary: #1a2410; --secondary-foreground: #d9f99d;
+  --accent: #1a2410; --accent-foreground: #d9f99d;
+  --sidebar-primary: #84cc16; --sidebar-ring: #84cc16;
+  --sidebar-accent: #1a2410; --sidebar-accent-foreground: #d9f99d;
+}
+
+/* ── Blueberry (blue) ────────────────────────────────────── */
+[data-theme="blueberry"] {
+  --primary: #2563eb; --primary-foreground: #fff; --ring: #2563eb;
+  --secondary: #dbeafe; --secondary-foreground: #1e40af;
+  --accent: #cfe0fd; --accent-foreground: #1e40af;
+  --sidebar-primary: #2563eb; --sidebar-ring: #2563eb;
+  --sidebar-accent: #cfe0fd; --sidebar-accent-foreground: #1e40af;
+}
+.dark[data-theme="blueberry"] {
+  --primary: #60a5fa; --primary-foreground: #0a1426; --ring: #60a5fa;
+  --secondary: #14203a; --secondary-foreground: #bfdbfe;
+  --accent: #14203a; --accent-foreground: #bfdbfe;
+  --sidebar-primary: #60a5fa; --sidebar-ring: #60a5fa;
+  --sidebar-accent: #14203a; --sidebar-accent-foreground: #bfdbfe;
+}
+
+/* ── Grape (purple) ──────────────────────────────────────── */
+[data-theme="grape"] {
+  --primary: #7c3aed; --primary-foreground: #fff; --ring: #7c3aed;
+  --secondary: #ede9fe; --secondary-foreground: #5b21b6;
+  --accent: #e3dcfd; --accent-foreground: #5b21b6;
+  --sidebar-primary: #7c3aed; --sidebar-ring: #7c3aed;
+  --sidebar-accent: #e3dcfd; --sidebar-accent-foreground: #5b21b6;
+}
+.dark[data-theme="grape"] {
+  --primary: #a78bfa; --primary-foreground: #160f29; --ring: #a78bfa;
+  --secondary: #1f1733; --secondary-foreground: #ddd6fe;
+  --accent: #1f1733; --accent-foreground: #ddd6fe;
+  --sidebar-primary: #a78bfa; --sidebar-ring: #a78bfa;
+  --sidebar-accent: #1f1733; --sidebar-accent-foreground: #ddd6fe;
+}
+
+/* ── Rose (rose red) ─────────────────────────────────────── */
+[data-theme="rose"] {
+  --primary: #e11d48; --primary-foreground: #fff; --ring: #e11d48;
+  --secondary: #ffe4e6; --secondary-foreground: #9f1239;
+  --accent: #fdd3d8; --accent-foreground: #9f1239;
+  --sidebar-primary: #e11d48; --sidebar-ring: #e11d48;
+  --sidebar-accent: #fdd3d8; --sidebar-accent-foreground: #9f1239;
+}
+.dark[data-theme="rose"] {
+  --primary: #fb7185; --primary-foreground: #2a0a10; --ring: #fb7185;
+  --secondary: #2e1216; --secondary-foreground: #fecdd3;
+  --accent: #2e1216; --accent-foreground: #fecdd3;
+  --sidebar-primary: #fb7185; --sidebar-ring: #fb7185;
+  --sidebar-accent: #2e1216; --sidebar-accent-foreground: #fecdd3;
+}
+
+/* ── Midnight (cyan/teal) ────────────────────────────────── */
+[data-theme="midnight"] {
+  --primary: #0e7490; --primary-foreground: #fff; --ring: #0e7490;
+  --secondary: #cffafe; --secondary-foreground: #155e75;
+  --accent: #bdf3f9; --accent-foreground: #155e75;
+  --sidebar-primary: #0e7490; --sidebar-ring: #0e7490;
+  --sidebar-accent: #bdf3f9; --sidebar-accent-foreground: #155e75;
+}
+.dark[data-theme="midnight"] {
+  --primary: #22d3ee; --primary-foreground: #062028; --ring: #22d3ee;
+  --secondary: #0d2227; --secondary-foreground: #a5f3fc;
+  --accent: #0d2227; --accent-foreground: #a5f3fc;
+  --sidebar-primary: #22d3ee; --sidebar-ring: #22d3ee;
+  --sidebar-accent: #0d2227; --sidebar-accent-foreground: #a5f3fc;
 }

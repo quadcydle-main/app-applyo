@@ -1,6 +1,8 @@
 import type React from "react"
 import { Sidebar } from "@/components/sidebar"
 import { Topbar } from "@/components/topbar"
+import { HelpAssistant } from "@/components/help-assistant"
+import { OnboardingWizard } from "@/components/onboarding-wizard"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 
@@ -25,6 +27,8 @@ export default async function DashboardLayout({
         <Topbar />
         <main className="flex-1 overflow-y-auto bg-background">{children}</main>
       </div>
+      <HelpAssistant basePath="/dashboard" />
+      <OnboardingWizard basePath="/dashboard" />
     </div>
   )
 }

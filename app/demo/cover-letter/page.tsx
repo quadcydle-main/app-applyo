@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Copy, CheckCircle, ArrowRight, Sparkles } from "lucide-react"
+import { FileText, Copy, CheckCircle, ArrowRight, Sparkles, Download } from "lucide-react"
 import { DEMO_RESUME, DEMO_JOB_DESCRIPTION, DEMO_COVER_LETTER } from "@/lib/demo/data"
+import { printDocument } from "@/lib/print"
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -91,11 +92,16 @@ export default function DemoCoverLetterPage() {
             <div className="bg-muted/50 rounded-lg p-5 border border-border">
               <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{result}</p>
             </div>
-            <Link href="/auth/sign-up">
-              <Button size="sm" className="gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">
-                Save this letter to your account <ArrowRight className="w-3.5 h-3.5" />
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => printDocument("Cover Letter", result)} className="gap-1.5">
+                <Download className="w-3.5 h-3.5" /> Download PDF
               </Button>
-            </Link>
+              <Link href="/auth/sign-up">
+                <Button size="sm" className="gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">
+                  Save this letter to your account <ArrowRight className="w-3.5 h-3.5" />
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       )}

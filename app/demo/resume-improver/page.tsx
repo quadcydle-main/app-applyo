@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { Brain, Copy, CheckCircle, ArrowRight, Sparkles } from "lucide-react"
+import { Brain, Copy, CheckCircle, ArrowRight, Sparkles, Download } from "lucide-react"
 import { DEMO_RESUME, DEMO_IMPROVED_RESUME } from "@/lib/demo/data"
+import { printDocument } from "@/lib/print"
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -93,6 +94,9 @@ export default function DemoResumeImproverPage() {
                   <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">
                     {copied ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                     {copied ? "Copied!" : "Copy"}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => printDocument("Improved Resume", result)} className="gap-1.5">
+                    <Download className="w-3.5 h-3.5" /> PDF
                   </Button>
                   <Link href="/auth/sign-up" className="flex-1">
                     <Button size="sm" className="w-full gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">

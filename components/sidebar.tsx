@@ -5,13 +5,13 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   ChevronDown, ChevronLeft, ChevronRight, Brain, Briefcase, User, LogOut, Sparkles,
-  Zap, CreditCard, BarChart2, FolderOpen, Search, Mail,
+  Zap, CreditCard, BarChart2, FolderOpen, Search, Mail, Users,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 
-type BadgeType = "new" | "pro" | "team" | "soon"
+type BadgeType = "new" | "pro" | "team" | "soon" | "ent"
 
 type ChildItem = {
   id: string
@@ -37,17 +37,19 @@ const iconMap: Record<string, React.ReactNode> = {
   FolderOpen: <FolderOpen className="w-4 h-4" />,
   Search: <Search className="w-4 h-4" />,
   Mail: <Mail className="w-4 h-4" />,
+  Users: <Users className="w-4 h-4" />,
 }
 
 const BADGE_STYLES: Record<BadgeType, string> = {
   new:  "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400",
   pro:  "bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400",
   team: "bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-400",
+  ent:  "bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400",
   soon: "bg-muted text-muted-foreground",
 }
 
 const BADGE_LABELS: Record<BadgeType, string> = {
-  new: "NEW", pro: "PRO", team: "TEAM", soon: "SOON",
+  new: "NEW", pro: "PRO", team: "TEAM", ent: "ENT", soon: "SOON",
 }
 
 function getSidebarData(basePath: string): SidebarGroup[] {
@@ -57,6 +59,7 @@ function getSidebarData(basePath: string): SidebarGroup[] {
       title: "AI Tools",
       icon: "Brain",
       children: [
+        { id: "tailor", title: "Tailor Everything", href: `${basePath}/tailor`, badge: "new" },
         { id: "resume_improver", title: "Resume Improver",   href: `${basePath}/resume-improver` },
         { id: "cover_letter",    title: "Cover Letter",      href: `${basePath}/cover-letter` },
         { id: "ats_checker",     title: "ATS Checker",       href: `${basePath}/ats-checker` },
@@ -83,6 +86,17 @@ function getSidebarData(basePath: string): SidebarGroup[] {
       icon: "Zap",
       children: [
         { id: "start_auto_apply", title: "Start Auto-Apply", href: `${basePath}/auto-applier/start`, badge: "team" },
+      ],
+    },
+    {
+      id: "recruiter",
+      title: "Recruiter Hub",
+      icon: "Users",
+      children: [
+        { id: "rec_dashboard", title: "Talent Dashboard",  href: `${basePath}/recruiter`, badge: "ent" },
+        { id: "rec_candidates", title: "Browse Candidates", href: `${basePath}/recruiter/candidates`, badge: "ent" },
+        { id: "rec_applications", title: "Vet Applications", href: `${basePath}/recruiter/applications`, badge: "ent" },
+        { id: "rec_portfolio", title: "Recruiter Portfolio", href: `${basePath}/recruiter/portfolio`, badge: "ent" },
       ],
     },
     {
@@ -139,7 +153,8 @@ export function Sidebar({ basePath = "/dashboard", isDemo = false }: SidebarProp
   const router = useRouter()
   const supabase = !isDemo ? createClient() : null
 
-  const sidebarData = getSidebarData(basePath)
+  // Recruiter Hub pages currently exist only in demo — hide the group in the real dashboard.
+  const sidebarData = getSidebarData(basePath).filter((g) => g.id !== "recruiter" || isDemo)
 
   const toggleGroup = (id: string) => {
     const newExpanded = new Set(expandedGroups)

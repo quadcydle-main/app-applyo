@@ -3,10 +3,11 @@
 import { useEffect, useState, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Search, User, Settings, Activity, LogOut, ChevronDown } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { User, Settings, Activity, LogOut, ChevronDown } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { ThemeCustomizer } from "@/components/theme-customizer"
+import { CommandPalette } from "@/components/command-palette"
 
 export function Topbar() {
   const [user, setUser] = useState<any>(null)
@@ -47,14 +48,12 @@ export function Topbar() {
   return (
     <div className="h-14 border-b border-border bg-card flex items-center justify-between px-6 animate-slide-down">
       <div className="flex items-center gap-4 flex-1 max-w-2xl">
-        <div className="relative flex-1">
-          <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
-          <Input
-            placeholder="Search features..."
-            className="pl-9 h-9 bg-muted border-border placeholder:text-muted-foreground text-sm focus:border-primary smooth-hover"
-          />
-        </div>
+        <CommandPalette basePath="/dashboard" />
       </div>
+
+      <div className="flex items-center gap-1">
+      {/* Theme customizer */}
+      <ThemeCustomizer />
 
       {/* Profile Dropdown */}
       <div className="relative" ref={dropdownRef}>
@@ -114,6 +113,7 @@ export function Topbar() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   )
